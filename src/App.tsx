@@ -147,26 +147,29 @@ function App() {
     );
   }
 
-  if (!user) {
+    if (!user) {
     return (
-      <Router>
-        <Routes>
-          <Route path="/" element={<SimpleAuth onLogin={handleLogin} />} />
-          <Route
-            path="/cadastro"
-            element={<MultiStepAuth onLogin={handleLogin} />}
-          />
-          <Route path="/termos-de-uso" element={<TermsOfService />} />
-          <Route path="/politica-de-privacidade" element={<PrivacyPolicy />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </Router>
+      <ThemeProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<SimpleAuth onLogin={handleLogin} />} />
+            <Route
+              path="/cadastro"
+              element={<MultiStepAuth onLogin={handleLogin} />}
+            />
+            <Route path="/termos-de-uso" element={<TermsOfService />} />
+            <Route path="/politica-de-privacidade" element={<PrivacyPolicy />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Router>
+      </ThemeProvider>
     );
   }
 
   return (
-    <Router>
-      <Layout user={user} onLogout={handleLogout}>
+    <ThemeProvider>
+      <Router>
+        <Layout user={user} onLogout={handleLogout}>
         <Routes>
           <Route path="/" element={<Feed user={user} />} />
           <Route
