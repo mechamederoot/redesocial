@@ -147,7 +147,7 @@ function App() {
     );
   }
 
-    if (!user) {
+  if (!user) {
     return (
       <ThemeProvider>
         <Router>
@@ -158,7 +158,10 @@ function App() {
               element={<MultiStepAuth onLogin={handleLogin} />}
             />
             <Route path="/termos-de-uso" element={<TermsOfService />} />
-            <Route path="/politica-de-privacidade" element={<PrivacyPolicy />} />
+            <Route
+              path="/politica-de-privacidade"
+              element={<PrivacyPolicy />}
+            />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Router>
@@ -170,84 +173,91 @@ function App() {
     <ThemeProvider>
       <Router>
         <Layout user={user} onLogout={handleLogout}>
-        <Routes>
-          <Route path="/" element={<Feed user={user} />} />
-          <Route
-            path="/profile"
-            element={
-              <Profile user={user} onUserDataRefresh={refreshUserData} />
-            }
-          />
-          <Route
-            path="/settings"
-            element={
-              <SimpleSettingsPage
-                user={user}
-                onLogout={handleLogout}
-                onUserUpdate={refreshUserData}
-              />
-            }
-          />
-          <Route
-            path="/search"
-            element={
-              <SearchPage userToken={user.token} currentUserId={user.id || 0} />
-            }
-          />
-          <Route
-            path="/edit-profile"
-            element={
-              <EditProfilePage user={user} onUserUpdate={refreshUserData} />
-            }
-          />
-          <Route
-            path="/user-info/:userId?"
-            element={
-              <UserInfoPage
-                userToken={user.token}
-                currentUserId={user.id || 0}
-              />
-            }
-          />
-          <Route
-            path="/post/:postId"
-            element={
-              <PostPage userToken={user.token} currentUserId={user.id || 0} />
-            }
-          />
-          <Route
-            path="/profile/:userId"
-            element={
-              <PublicProfilePage
-                userToken={user.token}
-                currentUserId={user.id || 0}
-              />
-            }
-          />
-          <Route
-            path="/@:username/id/:userId"
-            element={
-              <ProfileRoute
-                currentUser={user}
-                onUserDataRefresh={refreshUserData}
-              />
-            }
-          />
-          <Route
-            path="/@:username"
-            element={
-              <ProfileRoute
-                currentUser={user}
-                onUserDataRefresh={refreshUserData}
-              />
-            }
-          />
-          <Route path="/termos-de-uso" element={<TermsOfService />} />
-          <Route path="/politica-de-privacidade" element={<PrivacyPolicy />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </Layout>
-    </Router>
+          <Routes>
+            <Route path="/" element={<Feed user={user} />} />
+            <Route
+              path="/profile"
+              element={
+                <Profile user={user} onUserDataRefresh={refreshUserData} />
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <SimpleSettingsPage
+                  user={user}
+                  onLogout={handleLogout}
+                  onUserUpdate={refreshUserData}
+                />
+              }
+            />
+            <Route
+              path="/search"
+              element={
+                <SearchPage
+                  userToken={user.token}
+                  currentUserId={user.id || 0}
+                />
+              }
+            />
+            <Route
+              path="/edit-profile"
+              element={
+                <EditProfilePage user={user} onUserUpdate={refreshUserData} />
+              }
+            />
+            <Route
+              path="/user-info/:userId?"
+              element={
+                <UserInfoPage
+                  userToken={user.token}
+                  currentUserId={user.id || 0}
+                />
+              }
+            />
+            <Route
+              path="/post/:postId"
+              element={
+                <PostPage userToken={user.token} currentUserId={user.id || 0} />
+              }
+            />
+            <Route
+              path="/profile/:userId"
+              element={
+                <PublicProfilePage
+                  userToken={user.token}
+                  currentUserId={user.id || 0}
+                />
+              }
+            />
+            <Route
+              path="/@:username/id/:userId"
+              element={
+                <ProfileRoute
+                  currentUser={user}
+                  onUserDataRefresh={refreshUserData}
+                />
+              }
+            />
+            <Route
+              path="/@:username"
+              element={
+                <ProfileRoute
+                  currentUser={user}
+                  onUserDataRefresh={refreshUserData}
+                />
+              }
+            />
+            <Route path="/termos-de-uso" element={<TermsOfService />} />
+            <Route
+              path="/politica-de-privacidade"
+              element={<PrivacyPolicy />}
+            />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Layout>
+      </Router>
+    </ThemeProvider>
   );
 }
 
