@@ -149,7 +149,7 @@ function App() {
     return (
       <Router>
         <Routes>
-          <Route path="/" element={<MultiStepAuth onLogin={handleLogin} />} />
+          <Route path="/" element={<AuthSelector onLogin={handleLogin} />} />
           <Route path="/termos-de-uso" element={<TermsOfService />} />
           <Route path="/politica-de-privacidade" element={<PrivacyPolicy />} />
           <Route path="*" element={<Navigate to="/" replace />} />
