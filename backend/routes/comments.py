@@ -1,52 +1,89 @@
+"""
+Rotas para comentários
+"""
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
+from sqlalchemy import desc
+from datetime import datetime
 from typing import List
-from main import get_db, get_current_user, User, Comment, CommentCreate, CommentResponse, Post
+
+from core.database import get_db
+from models.user import User
+from models.comment import Comment, CommentCreate, CommentResponse
+from utils.auth import get_current_user
 
 router = APIRouter()
 
 @router.post("/", response_model=CommentResponse)
-def create_comment(comment: CommentCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    # Check if post exists
-    post = db.query(Post).filter(Post.id == comment.post_id).first()
-    if not post:
-        raise HTTPException(status_code=404, detail="Post not found")
-    
-    db_comment = Comment(
-        content=comment.content,
-        post_id=comment.post_id,
-        parent_id=comment.parent_id,
-        author_id=current_user.id
-    )
-    db.add(db_comment)
-    db.commit()
-    db.refresh(db_comment)
-    
-    db_comment.reactions_count = 0
-    db_comment.replies = []
-    
-    return db_comment
+async def create_comment(
+    comment: CommentCreate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Criar um comentário"""
+    try:
+        db_comment = Comment(
+            author_id=current_user.id,
+            post_id=comment.post_id,
+            content=comment.content,
+            parent_id=comment.parent_id,
+            created_at=datetime.utcnow()
+        )
+        db.add(db_comment)
+        db.commit()
+        db.refresh(db_comment)
+        
+        return db_comment
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Erro ao criar comentário: {str(e)}")
 
-@router.get("/post/{post_id}", response_model=List[CommentResponse])
-def get_post_comments(post_id: int, db: Session = Depends(get_db)):
-    comments = db.query(Comment).filter(Comment.post_id == post_id, Comment.parent_id.is_(None)).all()
-    for comment in comments:
-        comment.reactions_count = 0
-        comment.replies = db.query(Comment).filter(Comment.parent_id == comment.id).all()
-        for reply in comment.replies:
-            reply.reactions_count = 0
+@router.get("/post/{post_id}")
+async def get_post_comments(
+    post_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Obter comentários de um post"""
+    comments = db.query(Comment).filter(
+        Comment.post_id == post_id,
+        Comment.parent_id.is_(None)  # Only root comments
+    ).order_by(desc(Comment.created_at)).all()
+    
     return comments
 
+@router.get("/{comment_id}/replies")
+async def get_comment_replies(
+    comment_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Obter respostas de um comentário"""
+    replies = db.query(Comment).filter(
+        Comment.parent_id == comment_id
+    ).order_by(Comment.created_at).all()
+    
+    return replies
+
 @router.delete("/{comment_id}")
-def delete_comment(comment_id: int, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    comment = db.query(Comment).filter(Comment.id == comment_id).first()
+async def delete_comment(
+    comment_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Deletar um comentário"""
+    comment = db.query(Comment).filter(
+        Comment.id == comment_id,
+        Comment.author_id == current_user.id
+    ).first()
+    
     if not comment:
-        raise HTTPException(status_code=404, detail="Comment not found")
+        raise HTTPException(status_code=404, detail="Comentário não encontrado")
     
-    if comment.author_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not authorized to delete this comment")
-    
-    db.delete(comment)
-    db.commit()
-    
-    return {"message": "Comment deleted successfully"}
+    try:
+        db.delete(comment)
+        db.commit()
+        return {"message": "Comentário deletado com sucesso"}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Erro ao deletar comentário: {str(e)}")
