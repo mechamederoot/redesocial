@@ -194,13 +194,19 @@ export function MultiStepAuth({ onLogin }: AuthProps) {
     setLoading(true);
 
     try {
+      // Formatando a data de nascimento para o backend
+      const birthDate =
+        formData.birthDay && formData.birthMonth && formData.birthYear
+          ? `${formData.birthYear}-${formData.birthMonth.padStart(2, "0")}-${formData.birthDay.padStart(2, "0")}`
+          : null;
+
       const registrationData = {
         first_name: formData.firstName,
         last_name: formData.lastName,
         email: formData.email,
         password: formData.password,
         gender: formData.gender,
-        birth_date: formData.birthDate,
+        birth_date: birthDate,
         phone: null,
         username:
           `${formData.firstName.toLowerCase()}${formData.lastName.toLowerCase()}`
