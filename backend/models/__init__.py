@@ -1,30 +1,26 @@
 """
-Inicialização dos modelos
+Models initialization - versão limpa e funcional
 """
-from .base import Base
-from .user import User, UserCreate, UserUpdate, UserResponse
-from .post import Post, PostCreate, PostResponse
-from .comment import Comment, CommentCreate, CommentResponse
-from .reaction import Reaction
-from .notification import Notification
-from .friendship import Friendship
-from .follow import Follow
-from .media import Media
-from .block import Block
-from .story import Story
 from .album import Album, AlbumPhoto
+from .block import Block
+from .follow import Follow
+from .friendship import Friendship
+from .media import MediaFile
+from .message import Message
+from .notification import Notification
+from .reaction import Reaction
+from .share import Share
+from .story import Story
 
 __all__ = [
-    "Base",
-    "User", "UserCreate", "UserUpdate", "UserResponse",
-    "Post", "PostCreate", "PostResponse", 
-    "Comment", "CommentCreate", "CommentResponse",
-    "Reaction",
-    "Notification",
+    "Album", "AlbumPhoto",
+    "Block",
+    "Follow", 
     "Friendship",
-    "Follow",
-    "Media",
-    "Block", 
-    "Story",
-    "Album", "AlbumPhoto"
+    "MediaFile",
+    "Message",
+    "Notification",
+    "Reaction",
+    "Share",
+    "Story"
 ]
