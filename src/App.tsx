@@ -5,6 +5,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+import { ThemeProvider } from "./contexts/ThemeContext";
 import { Layout } from "./components/Layout";
 import { SimpleAuth } from "./components/auth/SimpleAuth";
 import { MultiStepAuth } from "./components/auth/MultiStepAuth";
