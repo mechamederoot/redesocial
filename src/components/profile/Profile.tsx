@@ -327,19 +327,26 @@ export function Profile({
                       </p>
                     </div>
                   ) : (
-                    <div className="grid gap-6 md:grid-cols-2">
+                    <div className="space-y-6">
                       {testimonials.map((testimonial) => (
-                        <div
-                          key={testimonial.id}
-                          className="bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-200 rounded-xl p-6"
-                        >
-                          <PostCard
-                            post={testimonial}
-                            userToken={user.token}
-                            currentUserId={user.id}
-                            onPostDeleted={handlePostDeleted}
-                            showAuthor={false}
-                          />
+                        <div key={testimonial.id} className="relative">
+                          <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-0.5 rounded-xl">
+                            <div className="bg-white rounded-xl p-6">
+                              <div className="flex items-center space-x-3 mb-4">
+                                <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                                <span className="text-sm font-medium text-purple-600 uppercase tracking-wide">
+                                  Depoimento
+                                </span>
+                              </div>
+                              <PostCard
+                                post={testimonial}
+                                userToken={user.token}
+                                currentUserId={user.id}
+                                onPostDeleted={handlePostDeleted}
+                                showAuthor={false}
+                              />
+                            </div>
+                          </div>
                         </div>
                       ))}
                     </div>
