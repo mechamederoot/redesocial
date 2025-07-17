@@ -1040,7 +1040,7 @@ async def create_post_reaction(post_id: int, reaction_data: ReactionCreate, curr
         # Create new reaction
         reaction = Reaction(
             post_id=post_id,
-            user_id=current_user.id,
+            # user_id=current_user.id,
             reaction_type=reaction_data.reaction_type
         )
         db.add(reaction)
@@ -1824,7 +1824,7 @@ async def upload_user_cover_photo(file: UploadFile = File(...), current_user: Us
 
         # Criar entrada no álbum
         # album_photo = AlbumPhoto(
-            user_id=current_user.id,
+            # user_id=current_user.id,
             photo_url=cover_url,
             photo_type="cover",
             description="Foto de capa"
@@ -1892,7 +1892,7 @@ async def upload_cover_photo(file: UploadFile = File(...), current_user: User = 
 
         # Criar entrada no álbum
         # album_photo = AlbumPhoto(
-            user_id=current_user.id,
+            # user_id=current_user.id,
             photo_url=cover_url,
             photo_type="cover",
             description="Foto de capa"
