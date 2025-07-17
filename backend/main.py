@@ -1829,7 +1829,7 @@ async def upload_user_cover_photo(file: UploadFile = File(...), current_user: Us
             # photo_type="cover",
             # description="Foto de capa"
         # )
-        db.add(album_photo)
+        # db.add(album_photo)
 
         # Criar post automático sobre a atualização da foto de capa
         cover_post = Post(
@@ -1897,7 +1897,7 @@ async def upload_cover_photo(file: UploadFile = File(...), current_user: User = 
             # photo_type="cover",
             # description="Foto de capa"
         # )
-        db.add(album_photo)
+        # db.add(album_photo)
 
         # Criar post automático sobre a atualização da foto de capa
         cover_post = Post(
