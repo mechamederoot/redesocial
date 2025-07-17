@@ -6,7 +6,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import { Layout } from "./components/Layout";
-import { AuthSelector } from "./components/auth/AuthSelector";
+import { SimpleAuth } from "./components/auth/SimpleAuth";
 import { Feed } from "./components/Feed";
 import { Profile } from "./components/profile/Profile"; // Atualizado
 import { ProfileRoute } from "./components/routing/ProfileRoute";
