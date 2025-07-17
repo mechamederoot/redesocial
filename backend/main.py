@@ -331,7 +331,7 @@ class StoryOverlay(Base):
 
     story = relationship("Story", backref="overlays")
 
-# AlbumPhoto importado de models/album.py
+
 
 # Pydantic models
 class UserBase(BaseModel):
