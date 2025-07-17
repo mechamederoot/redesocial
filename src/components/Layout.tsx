@@ -18,6 +18,7 @@ import { NotificationCenter } from "./notifications/NotificationCenter";
 import { FriendRequestsModal } from "./modals/FriendRequestsModal";
 import { notificationService } from "../services/NotificationService";
 import { Logo } from "./ui/Logo";
+import { useTheme } from "../contexts/ThemeContext";
 
 interface LayoutProps {
   children: React.ReactNode;
