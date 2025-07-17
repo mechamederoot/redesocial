@@ -210,6 +210,19 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
 
             {/* Right side */}
             <div className="flex items-center space-x-4">
+              {/* Dark Mode Toggle */}
+              <button
+                onClick={toggleDarkMode}
+                className="p-2 text-gray-700 hover:text-blue-600 hover:bg-gray-100 rounded-lg transition-colors"
+                title={isDarkMode ? "Modo claro" : "Modo escuro"}
+              >
+                {isDarkMode ? (
+                  <Sun className="w-5 h-5" />
+                ) : (
+                  <Moon className="w-5 h-5" />
+                )}
+              </button>
+
               {/* Story Button */}
               <button
                 onClick={() => setShowCreateStory(true)}
