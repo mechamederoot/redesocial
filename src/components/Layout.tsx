@@ -213,7 +213,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
               {/* Dark Mode Toggle */}
               <button
                 onClick={toggleDarkMode}
-                className="p-2 text-gray-700 hover:text-blue-600 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
                 title={isDarkMode ? "Modo claro" : "Modo escuro"}
               >
                 {isDarkMode ? (
