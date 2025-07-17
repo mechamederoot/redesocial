@@ -68,14 +68,6 @@ def create_app() -> FastAPI:
         print(f"⚠️ Erro ao importar rotas: {e}")
         # Fallback para rotas básicas do main.py antigo se necessário
     
-    app.include_router(auth_router, prefix="/auth", tags=["auth"])
-    app.include_router(users_router, prefix="/users", tags=["users"])
-    app.include_router(posts_router, prefix="/posts", tags=["posts"])
-    app.include_router(comments_router, prefix="/comments", tags=["comments"])
-    app.include_router(reactions_router, prefix="/reactions", tags=["reactions"])
-    app.include_router(notifications_router, prefix="/notifications", tags=["notifications"])
-    app.include_router(friendship_router, prefix="/friendships", tags=["friendships"])
-    app.include_router(search_router, prefix="/search", tags=["search"])
-    app.include_router(upload_router, prefix="/upload", tags=["upload"])
+    
     
     return app
