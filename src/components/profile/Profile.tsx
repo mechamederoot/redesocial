@@ -330,14 +330,18 @@ export function Profile({
                     <div className="space-y-6">
                       {testimonials.map((testimonial) => (
                         <div key={testimonial.id} className="relative">
-                          <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-0.5 rounded-xl">
-                            <div className="bg-white rounded-xl p-6">
-                              <div className="flex items-center space-x-3 mb-4">
-                                <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                                <span className="text-sm font-medium text-purple-600 uppercase tracking-wide">
-                                  Depoimento
-                                </span>
-                              </div>
+                          {/* Badge do depoimento */}
+                          <div className="flex items-center space-x-2 mb-3">
+                            <div className="w-3 h-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
+                            <span className="text-sm font-semibold text-purple-600 uppercase tracking-wide">
+                              💜 Depoimento
+                            </span>
+                          </div>
+
+                          {/* PostCard com estilo especial para depoimento */}
+                          <div className="relative">
+                            <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl opacity-10"></div>
+                            <div className="relative border-l-4 border-purple-500">
                               <PostCard
                                 post={testimonial}
                                 userToken={user.token}
