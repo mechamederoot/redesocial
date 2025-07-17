@@ -1826,7 +1826,7 @@ async def upload_user_cover_photo(file: UploadFile = File(...), current_user: Us
         # album_photo = AlbumPhoto(
             # user_id=current_user.id,
             # photo_url=cover_url,
-            photo_type="cover",
+            # photo_type="cover",
             description="Foto de capa"
         )
         db.add(album_photo)
@@ -1894,7 +1894,7 @@ async def upload_cover_photo(file: UploadFile = File(...), current_user: User = 
         # album_photo = AlbumPhoto(
             # user_id=current_user.id,
             # photo_url=cover_url,
-            photo_type="cover",
+            # photo_type="cover",
             description="Foto de capa"
         )
         db.add(album_photo)
