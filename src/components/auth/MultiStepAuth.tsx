@@ -645,7 +645,7 @@ export function MultiStepAuth({ onLogin }: AuthProps) {
             <p className="text-gray-600">
               Já tem uma conta?{" "}
               <button
-                onClick={() => window.location.reload()}
+                onClick={() => (window.location.href = "/")}
                 className="text-blue-600 hover:text-blue-700 font-medium"
               >
                 Fazer login
