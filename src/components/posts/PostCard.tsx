@@ -35,6 +35,7 @@ interface PostCardProps {
   };
   userToken: string;
   onPostDeleted: () => void;
+  hideComments?: boolean; // Nova prop para esconder seção de comentários
 }
 
 export const PostCard: React.FC<PostCardProps> = ({
