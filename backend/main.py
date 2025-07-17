@@ -1751,14 +1751,7 @@ async def upload_user_avatar(file: UploadFile = File(...), current_user: User = 
         current_user.avatar = avatar_url
         current_user.updated_at = datetime.utcnow()
 
-        # Criar entrada no álbum
-        album_photo = AlbumPhoto(
-            user_id=current_user.id,
-            photo_url=avatar_url,
-            photo_type="profile",
-            description="Foto do perfil"
-        )
-        db.add(album_photo)
+                # Avatar salvo diretamente no usuário, não precisamos criar entrada no album_photos
 
         # Criar post automático sobre a atualização da foto de perfil
         profile_post = Post(
