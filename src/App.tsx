@@ -6,7 +6,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import { Layout } from "./components/Layout";
-import { SimpleAuth } from "./components/auth/SimpleAuth";
+import { MultiStepAuth } from "./components/auth/MultiStepAuth";
 import { Feed } from "./components/Feed";
 import { Profile } from "./components/profile/Profile"; // Atualizado
 import { ProfileRoute } from "./components/routing/ProfileRoute";
@@ -16,6 +16,8 @@ import { EditProfilePage } from "./pages/EditProfilePage";
 import { UserInfoPage } from "./pages/UserInfoPage";
 import { PostPage } from "./pages/PostPage";
 import { PublicProfilePage } from "./pages/PublicProfilePage";
+import { TermsOfService } from "./pages/TermsOfService";
+import { PrivacyPolicy } from "./pages/PrivacyPolicy";
 import { notificationService } from "./services/NotificationService";
 
 interface User {
@@ -142,7 +144,16 @@ function App() {
   }
 
   if (!user) {
-    return <SimpleAuth onLogin={handleLogin} />;
+    return (
+      <Router>
+        <Routes>
+          <Route path="/" element={<MultiStepAuth onLogin={handleLogin} />} />
+          <Route path="/termos-de-uso" element={<TermsOfService />} />
+          <Route path="/politica-de-privacidade" element={<PrivacyPolicy />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Router>
+    );
   }
 
   return (
@@ -220,6 +231,8 @@ function App() {
               />
             }
           />
+          <Route path="/termos-de-uso" element={<TermsOfService />} />
+          <Route path="/politica-de-privacidade" element={<PrivacyPolicy />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Layout>
