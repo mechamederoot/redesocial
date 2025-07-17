@@ -376,21 +376,72 @@ export function MultiStepAuth({ onLogin }: AuthProps) {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Data de Nascimento *
               </label>
-              <input
-                type="date"
-                value={formData.birthDate}
-                onChange={(e) => handleInputChange("birthDate", e.target.value)}
-                className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  errors.birthDate ? "border-red-500" : "border-gray-300"
-                }`}
-                max={
-                  new Date(
-                    new Date().setFullYear(new Date().getFullYear() - 13),
-                  )
-                    .toISOString()
-                    .split("T")[0]
-                }
-              />
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <select
+                    value={formData.birthDay}
+                    onChange={(e) =>
+                      handleInputChange("birthDay", e.target.value)
+                    }
+                    className={`w-full px-3 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                      errors.birthDate ? "border-red-500" : "border-gray-300"
+                    }`}
+                  >
+                    <option value="">Dia</option>
+                    {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
+                      <option key={day} value={day.toString().padStart(2, "0")}>
+                        {day}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <select
+                    value={formData.birthMonth}
+                    onChange={(e) =>
+                      handleInputChange("birthMonth", e.target.value)
+                    }
+                    className={`w-full px-3 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                      errors.birthDate ? "border-red-500" : "border-gray-300"
+                    }`}
+                  >
+                    <option value="">Mês</option>
+                    <option value="01">Janeiro</option>
+                    <option value="02">Fevereiro</option>
+                    <option value="03">Março</option>
+                    <option value="04">Abril</option>
+                    <option value="05">Maio</option>
+                    <option value="06">Junho</option>
+                    <option value="07">Julho</option>
+                    <option value="08">Agosto</option>
+                    <option value="09">Setembro</option>
+                    <option value="10">Outubro</option>
+                    <option value="11">Novembro</option>
+                    <option value="12">Dezembro</option>
+                  </select>
+                </div>
+                <div>
+                  <select
+                    value={formData.birthYear}
+                    onChange={(e) =>
+                      handleInputChange("birthYear", e.target.value)
+                    }
+                    className={`w-full px-3 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                      errors.birthDate ? "border-red-500" : "border-gray-300"
+                    }`}
+                  >
+                    <option value="">Ano</option>
+                    {Array.from(
+                      { length: 100 },
+                      (_, i) => new Date().getFullYear() - 13 - i,
+                    ).map((year) => (
+                      <option key={year} value={year.toString()}>
+                        {year}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
               {errors.birthDate && (
                 <p className="text-red-500 text-sm mt-1">{errors.birthDate}</p>
               )}
