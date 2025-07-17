@@ -31,18 +31,42 @@ def create_app() -> FastAPI:
     upload_dir.mkdir(exist_ok=True)
     app.mount("/uploads", StaticFiles(directory=str(upload_dir)), name="uploads")
     
-    # Incluir rotas
-    from routes import (
-        auth_router,
-        users_router,
-        posts_router,
-        comments_router,
-        reactions_router,
-        notifications_router,
-        friendship_router,
-        search_router,
-        upload_router
-    )
+        # Incluir rotas
+    try:
+        from routes import (
+            auth_router,
+            users_router,
+            posts_router,
+            comments_router
+        )
+
+        app.include_router(auth_router, prefix="/auth", tags=["auth"])
+        app.include_router(users_router, prefix="/users", tags=["users"])
+        app.include_router(posts_router, prefix="/posts", tags=["posts"])
+        app.include_router(comments_router, prefix="/comments", tags=["comments"])
+
+        # Rotas opcionais (se existirem)
+        try:
+            from routes.reactions import router as reactions_router
+            app.include_router(reactions_router, prefix="/reactions", tags=["reactions"])
+        except ImportError:
+            pass
+
+        try:
+            from routes.notifications import router as notifications_router
+            app.include_router(notifications_router, prefix="/notifications", tags=["notifications"])
+        except ImportError:
+            pass
+
+        try:
+            from routes.friendships import router as friendship_router
+            app.include_router(friendship_router, prefix="/friendships", tags=["friendships"])
+        except ImportError:
+            pass
+
+    except ImportError as e:
+        print(f"⚠️ Erro ao importar rotas: {e}")
+        # Fallback para rotas básicas do main.py antigo se necessário
     
     app.include_router(auth_router, prefix="/auth", tags=["auth"])
     app.include_router(users_router, prefix="/users", tags=["users"])
