@@ -98,6 +98,11 @@ def check_email_exists(email: str, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == email).first()
     return {"exists": user is not None}
 
+@router.get("/check-username-public")
+def check_username_availability(username: str, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.username == username).first()
+    return {"exists": user is not None}
+
 @router.get("/verify-token")
 async def verify_token(current_user: User = Depends(get_current_user)):
     return {"valid": True, "user": current_user}
