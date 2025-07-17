@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import { Layout } from "./components/Layout";
 import { SimpleAuth } from "./components/auth/SimpleAuth";
+import { MultiStepAuth } from "./components/auth/MultiStepAuth";
 import { Feed } from "./components/Feed";
 import { Profile } from "./components/profile/Profile"; // Atualizado
 import { ProfileRoute } from "./components/routing/ProfileRoute";
