@@ -1,163 +1,128 @@
-from fastapi import APIRouter, HTTPException, Depends
+"""
+Rotas para posts e feed
+"""
+from fastapi import APIRouter, HTTPException, Depends, Query
 from sqlalchemy.orm import Session
-from typing import List
-from main import (
-    get_db, get_current_user, User, Post, PostCreate, PostResponse, 
-    Comment, Like, Share, Reaction
-)
-import base64
-import os
+from sqlalchemy import desc, or_, and_
 from datetime import datetime
+from typing import List, Optional
+
+from core.database import get_db
+from models.user import User
+from models.post import Post, PostCreate, PostResponse
+from models.friendship import Friendship
+from utils.auth import get_current_user
 
 router = APIRouter()
 
 @router.post("/", response_model=PostResponse)
-def create_post(post: PostCreate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    print(f"Creating post for user {current_user.id}: {post.dict()}")
-    
-    # Handle base64 media data if present
-    media_url = post.media_url
-    if media_url and media_url.startswith('data:'):
-        try:
-            header, data = media_url.split(',', 1)
-            file_data = base64.b64decode(data)
-            
-            # Create uploads directory if it doesn't exist
-            os.makedirs('uploads/posts', exist_ok=True)
-            
-            # Generate filename
-            file_extension = 'jpg' if 'image' in header else 'mp4' if 'video' in header else 'mp3'
-            filename = f"post_{current_user.id}_{int(datetime.utcnow().timestamp())}.{file_extension}"
-            file_path = f"uploads/posts/{filename}"
-            
-            # Save file
-            with open(file_path, 'wb') as f:
-                f.write(file_data)
-            
-            media_url = f"http://localhost:8000/{file_path}"
-        except Exception as e:
-            print(f"Error saving media file: {e}")
-            media_url = None
-    
+async def create_post(
+    post: PostCreate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Criar um novo post"""
     try:
-                db_post = Post(
+        db_post = Post(
+            author_id=current_user.id,
             content=post.content,
             post_type=post.post_type,
             media_type=post.media_type,
-            media_url=media_url,
-            media_metadata=post.media_metadata,
+            media_url=post.media_url,
             privacy=post.privacy,
-            author_id=current_user.id,
-            is_profile_update=post.is_profile_update,
-            is_cover_update=post.is_cover_update
+            created_at=datetime.utcnow()
         )
-        print(f"Post object created with fields: content={post.content}, type={post.post_type}, privacy={post.privacy}")
-        
         db.add(db_post)
         db.commit()
         db.refresh(db_post)
         
-        print(f"Post committed with ID: {db_post.id}")
+        return db_post
     except Exception as e:
-        print(f"Error creating post: {e}")
         db.rollback()
-        raise HTTPException(status_code=500, detail=f"Error creating post: {str(e)}")
-    
-    # Add counts and author info
-    db_post.reactions_count = db.query(Reaction).filter(Reaction.post_id == db_post.id).count()
-    db_post.comments_count = db.query(Comment).filter(Comment.post_id == db_post.id).count()
-    db_post.shares_count = db.query(Share).filter(Share.post_id == db_post.id).count()
-    
-    # Add author information for response
-    db_post.author = {
-        "id": current_user.id,
-        "first_name": current_user.first_name,
-        "last_name": current_user.last_name,
-        "username": current_user.username,
-        "avatar": current_user.avatar
-    }
-    
-    print(f"Returning post: {db_post.id} with author: {db_post.author}")
-    return db_post
+        raise HTTPException(status_code=500, detail=f"Erro ao criar post: {str(e)}")
 
-@router.get("/", response_model=List[PostResponse])
-def get_posts(skip: int = 0, limit: int = 20, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    posts = db.query(Post).order_by(Post.created_at.desc()).offset(skip).limit(limit).all()
-    
-    # Add counts and author info for each post
-    for post in posts:
-        post.reactions_count = db.query(Reaction).filter(Reaction.post_id == post.id).count()
-        post.comments_count = db.query(Comment).filter(Comment.post_id == post.id).count()
-        post.shares_count = db.query(Share).filter(Share.post_id == post.id).count()
+@router.get("/feed")
+async def get_feed(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+    limit: int = Query(20, le=100),
+    offset: int = Query(0, ge=0)
+):
+    """Obter feed do usuário"""
+    try:
+        # Get IDs of friends
+        friend_ids_query = db.query(Friendship.friend_id).filter(
+            and_(
+                Friendship.user_id == current_user.id,
+                Friendship.status == "accepted"
+            )
+        ).union(
+            db.query(Friendship.user_id).filter(
+                and_(
+                    Friendship.friend_id == current_user.id,
+                    Friendship.status == "accepted"
+                )
+            )
+        ).subquery()
         
-        # Add author information
-        if post.author:
-            post.author = {
-                "id": post.author.id,
-                "first_name": post.author.first_name,
-                "last_name": post.author.last_name,
-                "username": post.author.username,
-                "avatar": post.author.avatar
-            }
-    
-    return posts
+        # Get posts from friends and own posts
+        posts = db.query(Post).filter(
+            or_(
+                Post.author_id == current_user.id,
+                Post.author_id.in_(friend_ids_query)
+            )
+        ).order_by(desc(Post.created_at)).offset(offset).limit(limit).all()
+        
+        return posts
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao carregar feed: {str(e)}")
 
 @router.get("/{post_id}", response_model=PostResponse)
-def get_post(post_id: int, db: Session = Depends(get_db)):
+async def get_post(
+    post_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Obter um post específico"""
     post = db.query(Post).filter(Post.id == post_id).first()
     if not post:
-        raise HTTPException(status_code=404, detail="Post not found")
-    
-    # Add counts and author info
-    post.reactions_count = db.query(Reaction).filter(Reaction.post_id == post.id).count()
-    post.comments_count = db.query(Comment).filter(Comment.post_id == post.id).count()
-    post.shares_count = db.query(Share).filter(Share.post_id == post.id).count()
-    
-    # Add author information
-    if post.author:
-        post.author = {
-            "id": post.author.id,
-            "first_name": post.author.first_name,
-            "last_name": post.author.last_name,
-            "username": post.author.username,
-            "avatar": post.author.avatar
-        }
+        raise HTTPException(status_code=404, detail="Post não encontrado")
     
     return post
 
 @router.delete("/{post_id}")
-def delete_post(post_id: int, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    post = db.query(Post).filter(Post.id == post_id).first()
+async def delete_post(
+    post_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Deletar um post"""
+    post = db.query(Post).filter(
+        and_(Post.id == post_id, Post.author_id == current_user.id)
+    ).first()
+    
     if not post:
-        raise HTTPException(status_code=404, detail="Post not found")
+        raise HTTPException(status_code=404, detail="Post não encontrado")
     
-    if post.author_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not authorized to delete this post")
-    
-    # Delete associated file if exists
-    if post.media_url and post.media_url.startswith('http://localhost:8000/uploads/'):
-        file_path = post.media_url.replace('http://localhost:8000/', '')
-        try:
-            if os.path.exists(file_path):
-                os.remove(file_path)
-        except Exception as e:
-            print(f"Error deleting file: {e}")
-    
-    db.delete(post)
-    db.commit()
-    
-    return {"message": "Post deleted successfully"}
+    try:
+        db.delete(post)
+        db.commit()
+        return {"message": "Post deletado com sucesso"}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Erro ao deletar post: {str(e)}")
 
-@router.get("/{post_id}/comments")
-def get_post_comments(post_id: int, db: Session = Depends(get_db)):
-    comments = db.query(Comment).filter(
-        Comment.post_id == post_id,
-        Comment.parent_id == None
-    ).order_by(Comment.created_at.desc()).all()
+@router.get("/user/{user_id}")
+async def get_user_posts(
+    user_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+    limit: int = Query(20, le=100),
+    offset: int = Query(0, ge=0)
+):
+    """Obter posts de um usuário específico"""
+    posts = db.query(Post).filter(
+        Post.author_id == user_id
+    ).order_by(desc(Post.created_at)).offset(offset).limit(limit).all()
     
-    # Get replies for each comment
-    for comment in comments:
-        comment.replies = db.query(Comment).filter(Comment.parent_id == comment.id).all()
-        comment.reactions_count = 0  # Add reaction count logic if needed
-    
-    return comments
+    return posts
