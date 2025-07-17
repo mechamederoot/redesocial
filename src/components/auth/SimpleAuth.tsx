@@ -247,15 +247,20 @@ export function SimpleAuth({ onLogin }: AuthProps) {
               {isLogin ? "Não tem uma conta?" : "Já tem uma conta?"}{" "}
               <button
                 onClick={() => {
-                  setIsLogin(!isLogin);
-                  setError("");
-                  setFormData({
-                    first_name: "",
-                    last_name: "",
-                    email: "",
-                    password: "",
-                    confirm_password: "",
-                  });
+                  if (isLogin) {
+                    // Redirecionar para cadastro em etapas
+                    window.location.href = "/cadastro";
+                  } else {
+                    setIsLogin(!isLogin);
+                    setError("");
+                    setFormData({
+                      first_name: "",
+                      last_name: "",
+                      email: "",
+                      password: "",
+                      confirm_password: "",
+                    });
+                  }
                 }}
                 className="text-blue-600 hover:text-blue-700 font-medium"
               >
