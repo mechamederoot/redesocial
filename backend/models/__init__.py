@@ -1,6 +1,7 @@
 """
 Models initialization - versão limpa e funcional
 """
+from .base import Base
 from .album import Album, AlbumPhoto
 from .block import Block
 from .follow import Follow
@@ -13,6 +14,7 @@ from .share import Share
 from .story import Story
 
 __all__ = [
+    "Base",
     "Album", "AlbumPhoto",
     "Block",
     "Follow", 
