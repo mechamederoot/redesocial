@@ -168,7 +168,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
 
   return (
     <div
-      className={`min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 ${isMobile ? "pb-20" : ""}`}
+      className={`min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 ${isMobile ? "pb-20" : ""}`}
     >
       {/* Desktop Header */}
       <header className="bg-white shadow-sm border-b sticky top-0 z-40 hidden md:block">
