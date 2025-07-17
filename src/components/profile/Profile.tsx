@@ -327,19 +327,30 @@ export function Profile({
                       </p>
                     </div>
                   ) : (
-                    <div className="grid gap-6 md:grid-cols-2">
+                    <div className="space-y-6">
                       {testimonials.map((testimonial) => (
-                        <div
-                          key={testimonial.id}
-                          className="bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-200 rounded-xl p-6"
-                        >
-                          <PostCard
-                            post={testimonial}
-                            userToken={user.token}
-                            currentUserId={user.id}
-                            onPostDeleted={handlePostDeleted}
-                            showAuthor={false}
-                          />
+                        <div key={testimonial.id} className="relative">
+                          {/* Badge do depoimento */}
+                          <div className="flex items-center space-x-2 mb-3">
+                            <div className="w-3 h-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
+                            <span className="text-sm font-semibold text-purple-600 uppercase tracking-wide">
+                              💜 Depoimento
+                            </span>
+                          </div>
+
+                          {/* PostCard com estilo especial para depoimento */}
+                          <div className="relative">
+                            <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl opacity-10"></div>
+                            <div className="relative border-l-4 border-purple-500">
+                              <PostCard
+                                post={testimonial}
+                                userToken={user.token}
+                                currentUserId={user.id}
+                                onPostDeleted={handlePostDeleted}
+                                showAuthor={false}
+                              />
+                            </div>
+                          </div>
                         </div>
                       ))}
                     </div>

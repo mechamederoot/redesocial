@@ -20,10 +20,12 @@ load_dotenv()
 
 # Auto-fix database issues on startup
 try:
-    from auto_fix_reactions import auto_fix_reactions_table
+    from maintenance.auto_fix_reactions import auto_fix_reactions_table
     auto_fix_reactions_table()
 except Exception as e:
-    print(f"⚠️ Could not auto-fix reactions table: {e}")
+    # Silenciar aviso se arquivo não existir
+    if "No module named" not in str(e):
+        print(f"⚠️ Could not auto-fix reactions table: {e}")
 
 # Configurações
 SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-here-change-in-production")
@@ -330,18 +332,6 @@ class StoryOverlay(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     story = relationship("Story", backref="overlays")
-
-class AlbumPhoto(Base):
-    __tablename__ = "album_photos"
-
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    photo_url = Column(String(500), nullable=False)
-    photo_type = Column(String(20), default="profile")  # profile, cover, post
-    description = Column(Text)
-    created_at = Column(DateTime, default=datetime.utcnow)
-
-    user = relationship("User", backref="album_photos")
 
 # Pydantic models
 class UserBase(BaseModel):
@@ -1760,15 +1750,6 @@ async def upload_user_avatar(file: UploadFile = File(...), current_user: User = 
         current_user.avatar = avatar_url
         current_user.updated_at = datetime.utcnow()
 
-        # Criar entrada no álbum
-        album_photo = AlbumPhoto(
-            user_id=current_user.id,
-            photo_url=avatar_url,
-            photo_type="profile",
-            description="Foto do perfil"
-        )
-        db.add(album_photo)
-
         # Criar post automático sobre a atualização da foto de perfil
         profile_post = Post(
             author_id=current_user.id,
@@ -1790,7 +1771,7 @@ async def upload_user_avatar(file: UploadFile = File(...), current_user: User = 
             "post_created": True
         }
     except Exception as e:
-        print(f"❌ Exception during avatar upload: {str(e)}")
+        print(f"��� Exception during avatar upload: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to upload avatar: {str(e)}")
 
 @app.post("/users/me/cover")
@@ -1838,15 +1819,6 @@ async def upload_user_cover_photo(file: UploadFile = File(...), current_user: Us
         cover_url = f"/uploads/image/{unique_filename}"
         current_user.cover_photo = cover_url
         current_user.updated_at = datetime.utcnow()
-
-        # Criar entrada no álbum
-        album_photo = AlbumPhoto(
-            user_id=current_user.id,
-            photo_url=cover_url,
-            photo_type="cover",
-            description="Foto de capa"
-        )
-        db.add(album_photo)
 
         # Criar post automático sobre a atualização da foto de capa
         cover_post = Post(
@@ -1907,15 +1879,6 @@ async def upload_cover_photo(file: UploadFile = File(...), current_user: User = 
         current_user.cover_photo = cover_url
         current_user.updated_at = datetime.utcnow()
 
-        # Criar entrada no álbum
-        album_photo = AlbumPhoto(
-            user_id=current_user.id,
-            photo_url=cover_url,
-            photo_type="cover",
-            description="Foto de capa"
-        )
-        db.add(album_photo)
-
         # Criar post automático sobre a atualização da foto de capa
         cover_post = Post(
             author_id=current_user.id,
@@ -1936,15 +1899,6 @@ async def upload_cover_photo(file: UploadFile = File(...), current_user: User = 
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to upload cover photo: {str(e)}")
-
-@app.get("/users/{user_id}/album")
-async def get_user_album(user_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    """Buscar fotos do álbum do usuário"""
-    album_photos = db.query(AlbumPhoto).filter(
-        AlbumPhoto.user_id == user_id
-    ).order_by(AlbumPhoto.created_at.desc()).all()
-
-    return album_photos
 
 # Mark all notifications as read
 @app.put("/notifications/mark-all-read")
@@ -3133,11 +3087,7 @@ def initialize_database():
 initialize_database()
 
 # Include enhanced routes
-try:
-    from enhanced_routes import router as enhanced_router
-    app.include_router(enhanced_router, prefix="/api", tags=["enhanced"])
-except ImportError:
-    print("⚠️ Enhanced routes not loaded (enhanced_routes.py not found)")
+# Enhanced routes removidas para simplificar
 
 # Função para inicializar o banco com dados de exemplo
 def init_sample_data():

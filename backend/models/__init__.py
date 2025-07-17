@@ -1,36 +1,28 @@
 """
-Database models package
+Models initialization - versão limpa e funcional
 """
-from .user import User
-from .post import Post
-from .story import Story, StoryView, StoryTag, StoryOverlay
-from .notification import Notification
-from .friendship import Friendship
-from .reaction import Reaction
-from .comment import Comment
-from .share import Share
-from .message import Message
-from .media import MediaFile
+from .base import Base
+from .album import Album, AlbumPhoto
 from .block import Block
 from .follow import Follow
-from .album import Album, AlbumPhoto
+from .friendship import Friendship
+from .media import MediaFile
+from .message import Message
+from .notification import Notification
+from .reaction import Reaction
+from .share import Share
+from .story import Story
 
 __all__ = [
-    "User",
-    "Post", 
-    "Story",
-    "StoryView",
-    "StoryTag",
-    "StoryOverlay",
-    "Notification",
-    "Friendship",
-    "Reaction",
-    "Comment", 
-    "Share",
-    "Message",
-    "MediaFile",
+    "Base",
+    "Album", "AlbumPhoto",
     "Block",
-    "Follow",
-        "Album",
-    "AlbumPhoto"
+    "Follow", 
+    "Friendship",
+    "MediaFile",
+    "Message",
+    "Notification",
+    "Reaction",
+    "Share",
+    "Story"
 ]

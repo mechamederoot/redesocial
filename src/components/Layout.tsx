@@ -9,6 +9,8 @@ import {
   Plus,
   Bell,
   UserPlus,
+  Moon,
+  Sun,
 } from "lucide-react";
 import { MessagesModal } from "./modals/MessagesModal";
 import { ResponsiveCreateStoryModal } from "./modals/ResponsiveCreateStoryModal";
@@ -16,6 +18,7 @@ import { NotificationCenter } from "./notifications/NotificationCenter";
 import { FriendRequestsModal } from "./modals/FriendRequestsModal";
 import { notificationService } from "../services/NotificationService";
 import { Logo } from "./ui/Logo";
+import { useTheme } from "../contexts/ThemeContext";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -30,6 +33,7 @@ interface LayoutProps {
 }
 
 export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
+  const { isDarkMode, toggleDarkMode } = useTheme();
   const [showMessages, setShowMessages] = useState(false);
   const [showCreateStory, setShowCreateStory] = useState(false);
   const [showFriendRequests, setShowFriendRequests] = useState(false);
@@ -164,10 +168,10 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
 
   return (
     <div
-      className={`min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 ${isMobile ? "pb-20" : ""}`}
+      className={`min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 ${isMobile ? "pb-20" : ""}`}
     >
       {/* Desktop Header */}
-      <header className="bg-white shadow-sm border-b sticky top-0 z-40 hidden md:block">
+      <header className="bg-white dark:bg-gray-800 shadow-sm border-b dark:border-gray-700 sticky top-0 z-40 hidden md:block">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
@@ -206,6 +210,19 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
 
             {/* Right side */}
             <div className="flex items-center space-x-4">
+              {/* Dark Mode Toggle */}
+              <button
+                onClick={toggleDarkMode}
+                className="p-2 text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                title={isDarkMode ? "Modo claro" : "Modo escuro"}
+              >
+                {isDarkMode ? (
+                  <Sun className="w-5 h-5" />
+                ) : (
+                  <Moon className="w-5 h-5" />
+                )}
+              </button>
+
               {/* Story Button */}
               <button
                 onClick={() => setShowCreateStory(true)}

@@ -5,8 +5,10 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+import { ThemeProvider } from "./contexts/ThemeContext";
 import { Layout } from "./components/Layout";
 import { SimpleAuth } from "./components/auth/SimpleAuth";
+import { MultiStepAuth } from "./components/auth/MultiStepAuth";
 import { Feed } from "./components/Feed";
 import { Profile } from "./components/profile/Profile"; // Atualizado
 import { ProfileRoute } from "./components/routing/ProfileRoute";
@@ -16,6 +18,8 @@ import { EditProfilePage } from "./pages/EditProfilePage";
 import { UserInfoPage } from "./pages/UserInfoPage";
 import { PostPage } from "./pages/PostPage";
 import { PublicProfilePage } from "./pages/PublicProfilePage";
+import { TermsOfService } from "./pages/TermsOfService";
+import { PrivacyPolicy } from "./pages/PrivacyPolicy";
 import { notificationService } from "./services/NotificationService";
 
 interface User {
@@ -110,9 +114,11 @@ function App() {
     name: string;
     email: string;
     token: string;
+    id: number;
   }) => {
     const userWithDefaults = {
       ...userData,
+      id: userData.id,
       bio: "Apaixonado por conexões genuínas e boas vibes! 🌟",
       location: "São Paulo, Brasil",
       joinDate: "Janeiro 2025",
@@ -142,88 +148,116 @@ function App() {
   }
 
   if (!user) {
-    return <SimpleAuth onLogin={handleLogin} />;
+    return (
+      <ThemeProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<SimpleAuth onLogin={handleLogin} />} />
+            <Route
+              path="/cadastro"
+              element={<MultiStepAuth onLogin={handleLogin} />}
+            />
+            <Route path="/termos-de-uso" element={<TermsOfService />} />
+            <Route
+              path="/politica-de-privacidade"
+              element={<PrivacyPolicy />}
+            />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Router>
+      </ThemeProvider>
+    );
   }
 
   return (
-    <Router>
-      <Layout user={user} onLogout={handleLogout}>
-        <Routes>
-          <Route path="/" element={<Feed user={user} />} />
-          <Route
-            path="/profile"
-            element={
-              <Profile user={user} onUserDataRefresh={refreshUserData} />
-            }
-          />
-          <Route
-            path="/settings"
-            element={
-              <SimpleSettingsPage
-                user={user}
-                onLogout={handleLogout}
-                onUserUpdate={refreshUserData}
-              />
-            }
-          />
-          <Route
-            path="/search"
-            element={
-              <SearchPage userToken={user.token} currentUserId={user.id || 0} />
-            }
-          />
-          <Route
-            path="/edit-profile"
-            element={
-              <EditProfilePage user={user} onUserUpdate={refreshUserData} />
-            }
-          />
-          <Route
-            path="/user-info/:userId?"
-            element={
-              <UserInfoPage
-                userToken={user.token}
-                currentUserId={user.id || 0}
-              />
-            }
-          />
-          <Route
-            path="/post/:postId"
-            element={
-              <PostPage userToken={user.token} currentUserId={user.id || 0} />
-            }
-          />
-          <Route
-            path="/profile/:userId"
-            element={
-              <PublicProfilePage
-                userToken={user.token}
-                currentUserId={user.id || 0}
-              />
-            }
-          />
-          <Route
-            path="/@:username/id/:userId"
-            element={
-              <ProfileRoute
-                currentUser={user}
-                onUserDataRefresh={refreshUserData}
-              />
-            }
-          />
-          <Route
-            path="/@:username"
-            element={
-              <ProfileRoute
-                currentUser={user}
-                onUserDataRefresh={refreshUserData}
-              />
-            }
-          />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </Layout>
-    </Router>
+    <ThemeProvider>
+      <Router>
+        <Layout user={user} onLogout={handleLogout}>
+          <Routes>
+            <Route path="/" element={<Feed user={user} />} />
+            <Route
+              path="/profile"
+              element={
+                <Profile user={user} onUserDataRefresh={refreshUserData} />
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <SimpleSettingsPage
+                  user={user}
+                  onLogout={handleLogout}
+                  onUserUpdate={refreshUserData}
+                />
+              }
+            />
+            <Route
+              path="/search"
+              element={
+                <SearchPage
+                  userToken={user.token}
+                  currentUserId={user.id || 0}
+                />
+              }
+            />
+            <Route
+              path="/edit-profile"
+              element={
+                <EditProfilePage user={user} onUserUpdate={refreshUserData} />
+              }
+            />
+            <Route
+              path="/user-info/:userId?"
+              element={
+                <UserInfoPage
+                  userToken={user.token}
+                  currentUserId={user.id || 0}
+                />
+              }
+            />
+            <Route
+              path="/post/:postId"
+              element={
+                <PostPage userToken={user.token} currentUserId={user.id || 0} />
+              }
+            />
+            <Route
+              path="/profile/:userId"
+              element={
+                <PublicProfilePage
+                  userToken={user.token}
+                  currentUserId={user.id || 0}
+                />
+              }
+            />
+            <Route
+              path="/@:username/id/:userId"
+              element={
+                <ProfileRoute
+                  currentUser={user}
+                  onUserDataRefresh={refreshUserData}
+                />
+              }
+            />
+            <Route
+              path="/@:username"
+              element={
+                <ProfileRoute
+                  currentUser={user}
+                  onUserDataRefresh={refreshUserData}
+                />
+              }
+            />
+            <Route path="/termos-de-uso" element={<TermsOfService />} />
+            <Route
+              path="/politica-de-privacidade"
+              element={<PrivacyPolicy />}
+            />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Layout>
+      </Router>
+    </ThemeProvider>
   );
 }
 
