@@ -14,6 +14,7 @@ from dotenv import load_dotenv
 import json
 import asyncio
 from pathlib import Path
+from models.album import Album, AlbumPhoto
 
 # Carrega variáveis de ambiente
 load_dotenv()
