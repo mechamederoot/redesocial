@@ -1771,7 +1771,7 @@ async def upload_user_avatar(file: UploadFile = File(...), current_user: User = 
             "post_created": True
         }
     except Exception as e:
-        print(f"❌ Exception during avatar upload: {str(e)}")
+        print(f"��� Exception during avatar upload: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to upload avatar: {str(e)}")
 
 @app.post("/users/me/cover")
@@ -3087,11 +3087,7 @@ def initialize_database():
 initialize_database()
 
 # Include enhanced routes
-try:
-    from enhanced_routes import router as enhanced_router
-    app.include_router(enhanced_router, prefix="/api", tags=["enhanced"])
-except ImportError:
-    print("⚠️ Enhanced routes not loaded (enhanced_routes.py not found)")
+# Enhanced routes removidas para simplificar
 
 # Função para inicializar o banco com dados de exemplo
 def init_sample_data():
