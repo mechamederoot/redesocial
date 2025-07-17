@@ -430,13 +430,30 @@ export const PostCard: React.FC<PostCardProps> = ({
               onReactionChange={(reaction) => setCurrentReaction(reaction)}
               onReactionRemove={() => setCurrentReaction(null)}
             />
-            <button
-              onClick={() => setShowComments(!showComments)}
-              className="flex items-center space-x-2 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
-            >
-              <MessageCircle className="w-5 h-5" />
-              <span className="text-sm font-medium">Comentar</span>
-            </button>
+            {!hideComments ? (
+              <button
+                onClick={() => setShowComments(!showComments)}
+                className="flex items-center space-x-2 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
+              >
+                <MessageCircle className="w-5 h-5" />
+                <span className="text-sm font-medium">Comentar</span>
+                {post.comments_count > 0 && (
+                  <span className="text-xs bg-gray-100 px-2 py-1 rounded-full">
+                    {post.comments_count}
+                  </span>
+                )}
+              </button>
+            ) : (
+              <span className="flex items-center space-x-2 px-3 py-2 text-gray-600">
+                <MessageCircle className="w-5 h-5" />
+                <span className="text-sm font-medium">Comentar</span>
+                {post.comments_count > 0 && (
+                  <span className="text-xs bg-gray-100 px-2 py-1 rounded-full">
+                    {post.comments_count}
+                  </span>
+                )}
+              </span>
+            )}
 
             <button className="flex items-center space-x-2 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors">
               <Share className="w-5 h-5" />
