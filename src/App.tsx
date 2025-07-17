@@ -151,6 +151,10 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<SimpleAuth onLogin={handleLogin} />} />
+          <Route
+            path="/cadastro"
+            element={<MultiStepAuth onLogin={handleLogin} />}
+          />
           <Route path="/termos-de-uso" element={<TermsOfService />} />
           <Route path="/politica-de-privacidade" element={<PrivacyPolicy />} />
           <Route path="*" element={<Navigate to="/" replace />} />
