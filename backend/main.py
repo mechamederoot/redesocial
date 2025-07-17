@@ -1824,7 +1824,7 @@ async def upload_user_cover_photo(file: UploadFile = File(...), current_user: Us
         current_user.updated_at = datetime.utcnow()
 
         # Criar entrada no álbum
-        album_photo = AlbumPhoto(
+        # album_photo = AlbumPhoto(
             user_id=current_user.id,
             photo_url=cover_url,
             photo_type="cover",
@@ -1892,7 +1892,7 @@ async def upload_cover_photo(file: UploadFile = File(...), current_user: User = 
         current_user.updated_at = datetime.utcnow()
 
         # Criar entrada no álbum
-        album_photo = AlbumPhoto(
+        # album_photo = AlbumPhoto(
             user_id=current_user.id,
             photo_url=cover_url,
             photo_type="cover",
