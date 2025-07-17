@@ -1,3 +1,6 @@
+"""
+Rotas de autenticação
+"""
 from fastapi import APIRouter, HTTPException, Depends, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -7,19 +10,26 @@ from typing import Optional
 from pydantic import BaseModel
 import random
 
-from main import (
-    get_db, User, UserCreate, UserResponse, Token, get_current_user,
-    hash_password, verify_password, SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES,
-    create_access_token
+from core.database import get_db
+from core.config import settings
+from models.user import User, UserCreate, UserResponse
+from utils.auth import (
+    hash_password, 
+    verify_password, 
+    create_access_token,
+    get_current_user
 )
 
 router = APIRouter()
-
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 class LoginRequest(BaseModel):
     email: str
     password: str
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
 
 @router.post("/register", response_model=UserResponse)
 def register(user: UserCreate, db: Session = Depends(get_db)):
@@ -29,10 +39,9 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
         if db_user:
             raise HTTPException(status_code=400, detail="Email already registered")
         
-                        # Generate random display ID for profile URL
-        # Ensure it's unique
+        # Generate random display ID for profile URL
         while True:
-            random_display_id = str(random.randint(1000000000, 9999999999))  # 10-digit random number
+            random_display_id = str(random.randint(1000000000, 9999999999))
             existing = db.query(User).filter(User.display_id == random_display_id).first()
             if not existing:
                 break
@@ -48,6 +57,7 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
             gender=user.gender,
             birth_date=user.birth_date,
             phone=user.phone,
+            username=user.username,
             is_active=True,
             created_at=datetime.utcnow(),
             last_seen=datetime.utcnow()
@@ -77,9 +87,10 @@ def login(login_data: LoginRequest, db: Session = Depends(get_db)):
         if not user.is_active:
             raise HTTPException(status_code=400, detail="Inactive user")
         
-        access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token = create_access_token(
-            data={"sub": user.email, "user_id": user.id}, expires_delta=access_token_expires
+            data={"sub": user.email, "user_id": user.id}, 
+            expires_delta=access_token_expires
         )
         
         return {"access_token": access_token, "token_type": "bearer"}
