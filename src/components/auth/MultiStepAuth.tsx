@@ -179,6 +179,10 @@ export function MultiStepAuth({ onLogin }: AuthProps) {
         gender: formData.gender,
         birth_date: formData.birthDate,
         phone: null,
+        username:
+          `${formData.firstName.toLowerCase()}${formData.lastName.toLowerCase()}`
+            .replace(/[^a-z0-9]/g, "")
+            .substring(0, 15),
       };
 
       const response = await fetch("http://localhost:8000/auth/register", {
