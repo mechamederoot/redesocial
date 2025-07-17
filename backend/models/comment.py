@@ -1,21 +1,43 @@
 """
-Comment model
+Modelo de Comment
 """
-from sqlalchemy import Column, Integer, DateTime, Text, ForeignKey
+from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from datetime import datetime
-from core.database import Base
+from typing import Optional
+from pydantic import BaseModel
+
+from .base import Base
 
 class Comment(Base):
     __tablename__ = "comments"
-    
+
     id = Column(Integer, primary_key=True, index=True)
-    content = Column(Text, nullable=False)
-    post_id = Column(Integer, ForeignKey("posts.id"), nullable=False)
     author_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    parent_id = Column(Integer, ForeignKey("comments.id"), nullable=True)
+    post_id = Column(Integer, ForeignKey("posts.id"), nullable=False)
+    parent_id = Column(Integer, ForeignKey("comments.id"))  # For replies
+    content = Column(Text, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow)
     
+    # Relationships
     author = relationship("User", backref="comments")
-    post = relationship("Post", backref="comments")
-    parent = relationship("Comment", remote_side=[id], backref="replies")
+    replies = relationship("Comment", backref="parent", remote_side=[id])
+
+# Pydantic models
+class CommentBase(BaseModel):
+    content: str
+    post_id: int
+    parent_id: Optional[int] = None
+
+class CommentCreate(CommentBase):
+    pass
+
+class CommentResponse(CommentBase):
+    id: int
+    author_id: int
+    created_at: datetime
+    updated_at: datetime
+    
+    class Config:
+        from_attributes = True
