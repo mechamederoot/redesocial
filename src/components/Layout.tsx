@@ -33,6 +33,7 @@ interface LayoutProps {
 }
 
 export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
+  const { isDarkMode, toggleDarkMode } = useTheme();
   const [showMessages, setShowMessages] = useState(false);
   const [showCreateStory, setShowCreateStory] = useState(false);
   const [showFriendRequests, setShowFriendRequests] = useState(false);
