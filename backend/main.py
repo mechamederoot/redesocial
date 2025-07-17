@@ -331,17 +331,7 @@ class StoryOverlay(Base):
 
     story = relationship("Story", backref="overlays")
 
-class AlbumPhoto(Base):
-    __tablename__ = "album_photos"
-
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    photo_url = Column(String(500), nullable=False)
-    photo_type = Column(String(20), default="profile")  # profile, cover, post
-    description = Column(Text)
-    created_at = Column(DateTime, default=datetime.utcnow)
-
-    user = relationship("User", backref="album_photos")
+# AlbumPhoto importado de models/album.py
 
 # Pydantic models
 class UserBase(BaseModel):
