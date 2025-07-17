@@ -42,6 +42,7 @@ export const PostCard: React.FC<PostCardProps> = ({
   post,
   userToken,
   onPostDeleted,
+  hideComments = false,
 }) => {
   const navigate = useNavigate();
   const [showReactionPicker, setShowReactionPicker] = useState(false);
