@@ -20,10 +20,12 @@ load_dotenv()
 
 # Auto-fix database issues on startup
 try:
-    from auto_fix_reactions import auto_fix_reactions_table
+    from maintenance.auto_fix_reactions import auto_fix_reactions_table
     auto_fix_reactions_table()
 except Exception as e:
-    print(f"⚠️ Could not auto-fix reactions table: {e}")
+    # Silenciar aviso se arquivo não existir
+    if "No module named" not in str(e):
+        print(f"⚠️ Could not auto-fix reactions table: {e}")
 
 # Configurações
 SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-here-change-in-production")
