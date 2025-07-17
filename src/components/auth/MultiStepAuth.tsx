@@ -110,17 +110,36 @@ export function MultiStepAuth({ onLogin }: AuthProps) {
           newErrors.gender = "Selecione um gênero";
         }
 
-        if (!formData.birthDate) {
+        if (!formData.birthDay || !formData.birthMonth || !formData.birthYear) {
           newErrors.birthDate = "Data de nascimento é obrigatória";
         } else {
-          const birthDate = new Date(formData.birthDate);
-          const today = new Date();
-          const age = today.getFullYear() - birthDate.getFullYear();
+          const day = parseInt(formData.birthDay);
+          const month = parseInt(formData.birthMonth);
+          const year = parseInt(formData.birthYear);
 
-          if (age < 13) {
-            newErrors.birthDate = "Você deve ter pelo menos 13 anos";
-          } else if (age > 120) {
+          // Verificar se é uma data válida
+          const birthDate = new Date(year, month - 1, day);
+          const today = new Date();
+
+          if (
+            birthDate.getDate() !== day ||
+            birthDate.getMonth() !== month - 1 ||
+            birthDate.getFullYear() !== year
+          ) {
             newErrors.birthDate = "Data de nascimento inválida";
+          } else {
+            const age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            const dayDiff = today.getDate() - birthDate.getDate();
+
+            const actualAge =
+              age - (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0) ? 1 : 0);
+
+            if (actualAge < 13) {
+              newErrors.birthDate = "Você deve ter pelo menos 13 anos";
+            } else if (actualAge > 120) {
+              newErrors.birthDate = "Data de nascimento inválida";
+            }
           }
         }
         break;
