@@ -1920,14 +1920,14 @@ async def upload_cover_photo(file: UploadFile = File(...), current_user: User = 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to upload cover photo: {str(e)}")
 
-@app.get("/users/{user_id}/album")
-async def get_user_album(user_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    """Buscar fotos do álbum do usuário"""
-    album_photos = db.query(AlbumPhoto).filter(
-        AlbumPhoto.user_id == user_id
-    ).order_by(AlbumPhoto.created_at.desc()).all()
-
-    return album_photos
+# @app.get("/users/{user_id}/album")
+# async def get_user_album(user_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+#     """Buscar fotos do álbum do usuário"""
+#     album_photos = db.query(AlbumPhoto).filter(
+#         AlbumPhoto.user_id == user_id
+#     ).order_by(AlbumPhoto.created_at.desc()).all()
+#
+#     return album_photos
 
 # Mark all notifications as read
 @app.put("/notifications/mark-all-read")
