@@ -29,7 +29,9 @@ interface FormData {
   lastName: string;
   email: string;
   gender: string;
-  birthDate: string;
+  birthDay: string;
+  birthMonth: string;
+  birthYear: string;
   password: string;
   confirmPassword: string;
   acceptTerms: boolean;
