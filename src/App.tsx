@@ -116,6 +116,7 @@ function App() {
   }) => {
     const userWithDefaults = {
       ...userData,
+      id: userData.id,
       bio: "Apaixonado por conexões genuínas e boas vibes! 🌟",
       location: "São Paulo, Brasil",
       joinDate: "Janeiro 2025",
