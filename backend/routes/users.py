@@ -1,94 +1,185 @@
-from fastapi import APIRouter, HTTPException, Depends
+"""
+Rotas para gerenciamento de usuários
+"""
+from fastapi import APIRouter, HTTPException, Depends, File, UploadFile
 from sqlalchemy.orm import Session
+from datetime import datetime
 from typing import List
-from main import (
-    get_db, get_current_user, User, UserResponse, Post, PostResponse,
-    Reaction, Comment, Share, Friendship
-)
+import uuid
+import os
+from pathlib import Path
+
+from core.database import get_db
+from core.config import settings
+from models.user import User, UserUpdate, UserResponse
+from models.post import Post
+from utils.auth import get_current_user
 
 router = APIRouter()
 
-@router.get("/", response_model=List[UserResponse])
-def get_users(skip: int = 0, limit: int = 20, search: str = "", db: Session = Depends(get_db)):
-    query = db.query(User).filter(User.is_active == True)
-    
-    if search:
-        search_filter = f"%{search}%"
-        query = query.filter(
-            (User.first_name.ilike(search_filter)) |
-            (User.last_name.ilike(search_filter)) |
-            (User.email.ilike(search_filter)) |
-            (User.phone.ilike(search_filter))
-        )
-    
-    users = query.offset(skip).limit(limit).all()
-    return users
+@router.get("/me", response_model=UserResponse)
+async def get_current_user_profile(current_user: User = Depends(get_current_user)):
+    """Obter perfil do usuário atual"""
+    return current_user
 
-@router.get("/username/{username}", response_model=UserResponse)
-def get_user_by_username(username: str, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.username == username, User.is_active == True).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    return user
+@router.put("/me", response_model=UserResponse)
+async def update_current_user(
+    user_update: UserUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Atualizar perfil do usuário atual"""
+    try:
+        for field, value in user_update.dict(exclude_unset=True).items():
+            setattr(current_user, field, value)
+        
+        current_user.updated_at = datetime.utcnow()
+        db.commit()
+        db.refresh(current_user)
+        
+        return current_user
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Erro ao atualizar perfil: {str(e)}")
 
 @router.get("/{user_id}", response_model=UserResponse)
-def get_user(user_id: int, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.id == user_id, User.is_active == True).first()
+async def get_user_profile(
+    user_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Obter perfil de um usuário"""
+    user = db.query(User).filter(User.id == user_id).first()
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+    
     return user
 
-@router.get("/{user_id}/posts", response_model=List[PostResponse])
-def get_user_posts(user_id: int, skip: int = 0, limit: int = 20, db: Session = Depends(get_db)):
-    posts = db.query(Post).filter(Post.author_id == user_id).order_by(Post.created_at.desc()).offset(skip).limit(limit).all()
+@router.post("/me/avatar")
+async def upload_avatar(
+    file: UploadFile = File(...),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Upload de avatar do usuário"""
+    try:
+        # Validar tipo de arquivo
+        if not file.content_type or not file.content_type.startswith("image/"):
+            raise HTTPException(status_code=400, detail="Arquivo deve ser uma imagem")
+        
+        # Criar diretório se não existe
+        upload_dir = Path(settings.UPLOAD_DIR) / "image"
+        upload_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Gerar nome único
+        file_extension = file.filename.split('.')[-1] if '.' in file.filename else 'jpg'
+        unique_filename = f"avatar_{current_user.id}_{uuid.uuid4()}.{file_extension}"
+        
+        # Salvar arquivo
+        file_path = upload_dir / unique_filename
+        content = await file.read()
+        with open(file_path, "wb") as f:
+            f.write(content)
+        
+        # Atualizar usuário
+        avatar_url = f"/uploads/image/{unique_filename}"
+        current_user.avatar = avatar_url
+        current_user.updated_at = datetime.utcnow()
+        
+        # Criar post sobre atualização de avatar
+        profile_post = Post(
+            author_id=current_user.id,
+            content="atualizou a foto do perfil",
+            post_type="post",
+            media_type="photo",
+            media_url=avatar_url,
+            privacy="public",
+            is_profile_update=True,
+            created_at=datetime.utcnow()
+        )
+        db.add(profile_post)
+        db.commit()
+        
+        return {
+            "message": "Avatar atualizado com sucesso",
+            "avatar_url": avatar_url
+        }
     
-    # Add counts for each post
-    for post in posts:
-        post.reactions_count = db.query(Reaction).filter(Reaction.post_id == post.id).count()
-        post.comments_count = db.query(Comment).filter(Comment.post_id == post.id).count()
-        post.shares_count = db.query(Share).filter(Share.post_id == post.id).count()
-    
-    return posts
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Erro ao fazer upload do avatar: {str(e)}")
 
-@router.get("/{user_id}/testimonials", response_model=List[PostResponse])
-def get_user_testimonials(user_id: int, skip: int = 0, limit: int = 20, db: Session = Depends(get_db)):
-    posts = db.query(Post).filter(
-        Post.post_type == "testimonial"
-    ).order_by(Post.created_at.desc()).offset(skip).limit(limit).all()
+@router.post("/me/cover")
+async def upload_cover_photo(
+    file: UploadFile = File(...),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Upload de foto de capa"""
+    try:
+        # Validar tipo de arquivo
+        if not file.content_type or not file.content_type.startswith("image/"):
+            raise HTTPException(status_code=400, detail="Arquivo deve ser uma imagem")
+        
+        # Criar diretório se não existe
+        upload_dir = Path(settings.UPLOAD_DIR) / "image"
+        upload_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Gerar nome único
+        file_extension = file.filename.split('.')[-1] if '.' in file.filename else 'jpg'
+        unique_filename = f"cover_{current_user.id}_{uuid.uuid4()}.{file_extension}"
+        
+        # Salvar arquivo
+        file_path = upload_dir / unique_filename
+        content = await file.read()
+        with open(file_path, "wb") as f:
+            f.write(content)
+        
+        # Atualizar usuário
+        cover_url = f"/uploads/image/{unique_filename}"
+        current_user.cover_photo = cover_url
+        current_user.updated_at = datetime.utcnow()
+        
+        # Criar post sobre atualização de capa
+        cover_post = Post(
+            author_id=current_user.id,
+            content="atualizou a foto de capa",
+            post_type="post",
+            media_type="photo",
+            media_url=cover_url,
+            privacy="public",
+            is_cover_update=True,
+            created_at=datetime.utcnow()
+        )
+        db.add(cover_post)
+        db.commit()
+        
+        return {
+            "message": "Foto de capa atualizada com sucesso",
+            "cover_photo_url": cover_url
+        }
     
-    # Add counts for each post
-    for post in posts:
-        post.reactions_count = db.query(Reaction).filter(Reaction.post_id == post.id).count()
-        post.comments_count = db.query(Comment).filter(Comment.post_id == post.id).count()
-        post.shares_count = db.query(Share).filter(Share.post_id == post.id).count()
-    
-    return posts
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Erro ao fazer upload da capa: {str(e)}")
 
-@router.get("/{user_id}/stats")
-def get_user_stats(user_id: int, db: Session = Depends(get_db)):
-    # Count posts
-    posts_count = db.query(Post).filter(Post.author_id == user_id).count()
+@router.get("/search")
+async def search_users(
+    q: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Buscar usuários"""
+    if len(q) < 2:
+        return []
     
-    # Count friends
-    friends_count = db.query(Friendship).filter(
-        ((Friendship.requester_id == user_id) | (Friendship.addressee_id == user_id)) &
-        (Friendship.status == "accepted")
-    ).count()
+    users = db.query(User).filter(
+        or_(
+            User.first_name.ilike(f"%{q}%"),
+            User.last_name.ilike(f"%{q}%"),
+            User.username.ilike(f"%{q}%"),
+            User.email.ilike(f"%{q}%")
+        )
+    ).limit(20).all()
     
-    # Count testimonials
-    testimonials_count = db.query(Post).filter(
-        Post.post_type == "testimonial"
-    ).count()
-    
-    # Count total likes received
-    likes_count = db.query(Reaction).join(Post).filter(
-        Post.author_id == user_id,
-        Reaction.reaction_type == "like"
-    ).count()
-    
-    return {
-        "posts_count": posts_count,
-        "friends_count": friends_count,
-        "testimonials_count": testimonials_count,
-        "likes_count": likes_count
-    }
+    return users
