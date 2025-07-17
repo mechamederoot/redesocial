@@ -112,6 +112,7 @@ function App() {
     name: string;
     email: string;
     token: string;
+    id: number;
   }) => {
     const userWithDefaults = {
       ...userData,
