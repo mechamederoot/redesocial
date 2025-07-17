@@ -331,8 +331,6 @@ class StoryOverlay(Base):
 
     story = relationship("Story", backref="overlays")
 
-
-
 # Pydantic models
 class UserBase(BaseModel):
     first_name: str
@@ -752,7 +750,7 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
             is_active=True,
             created_at=datetime.utcnow(),
             last_seen=datetime.utcnow()
-        # )
+        )
         db.add(db_user)
         db.commit()
         db.refresh(db_user)
@@ -781,7 +779,7 @@ def login(login_data: LoginRequest, db: Session = Depends(get_db)):
         access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token = create_access_token(
             data={"sub": user.email, "user_id": user.id}, expires_delta=access_token_expires
-        # )
+        )
         
         return {"access_token": access_token, "token_type": "bearer"}
     except HTTPException:
@@ -900,7 +898,7 @@ async def get_posts(current_user: User = Depends(get_current_user), db: Session 
             shares_count=post.shares_count,
             is_profile_update=post.is_profile_update,
             is_cover_update=post.is_cover_update
-        # )
+        )
         for post in posts
     ]
 
@@ -931,7 +929,7 @@ async def get_user_posts(user_id: int, current_user: User = Depends(get_current_
             shares_count=db.query(Share).filter(Share.post_id == post.id).count(),
             is_profile_update=post.is_profile_update,
             is_cover_update=post.is_cover_update
-        # )
+        )
         for post in posts
     ]
 
@@ -984,7 +982,7 @@ async def get_post_comments(post_id: int, current_user: User = Depends(get_curre
             },
             created_at=comment.created_at,
             reactions_count=0  # TODO: Add comment reactions
-        # )
+        )
         for comment in comments
     ]
 
@@ -1040,9 +1038,9 @@ async def create_post_reaction(post_id: int, reaction_data: ReactionCreate, curr
         # Create new reaction
         reaction = Reaction(
             post_id=post_id,
-            # user_id=current_user.id,
+            user_id=current_user.id,
             reaction_type=reaction_data.reaction_type
-        # )
+        )
         db.add(reaction)
         db.commit()
         return {"message": "Reaction added"}
@@ -1088,7 +1086,7 @@ async def get_user_testimonials(user_id: int, current_user: User = Depends(get_c
             shares_count=db.query(Share).filter(Share.post_id == post.id).count(),
             is_profile_update=post.is_profile_update,
             is_cover_update=post.is_cover_update
-        # )
+        )
         for post in testimonials
     ]
 
@@ -1142,7 +1140,7 @@ async def create_reaction(reaction: ReactionCreate, current_user: User = Depends
             message=f"reagiu ao seu post com {reaction.reaction_type}",
             data=json.dumps({"post_id": reaction.post_id}),
             created_at=datetime.utcnow()
-        # )
+        )
         db.add(notification)
         db.commit()
         
@@ -1248,7 +1246,7 @@ async def create_comment(comment: CommentCreate, current_user: User = Depends(ge
             message="comentou no seu post",
             data=json.dumps({"post_id": comment.post_id, "comment_id": db_comment.id}),
             created_at=datetime.utcnow()
-        # )
+        )
         db.add(notification)
         db.commit()
         
@@ -1315,7 +1313,7 @@ async def get_post_comments(post_id: int, current_user: User = Depends(get_curre
                     replies=[]
                 ) for reply in replies
             ]
-        # ))
+        ))
     
     return result
 
@@ -1614,7 +1612,7 @@ async def get_user_friends(user_id: int, current_user: User = Depends(get_curren
             ((Friendship.requester_id == current_user.id) & (Friendship.addressee_id == user_id)) |
             ((Friendship.requester_id == user_id) & (Friendship.addressee_id == current_user.id)),
             Friendship.status == "accepted"
-        # ).first()
+        ).first()
 
         if not friendship:
             raise HTTPException(status_code=403, detail="Cannot view this user's friends list")
@@ -1750,8 +1748,6 @@ async def upload_user_avatar(file: UploadFile = File(...), current_user: User = 
         current_user.avatar = avatar_url
         current_user.updated_at = datetime.utcnow()
 
-                        # Avatar salvo diretamente no usuário, não precisamos criar entrada no album_photos
-
         # Criar post automático sobre a atualização da foto de perfil
         profile_post = Post(
             author_id=current_user.id,
@@ -1761,7 +1757,7 @@ async def upload_user_avatar(file: UploadFile = File(...), current_user: User = 
             media_url=avatar_url,
             privacy="public",
             is_profile_update=True
-        # )
+        )
         db.add(profile_post)
         db.commit()
         print(f"✅ Database updated with avatar URL: {avatar_url}")
@@ -1822,15 +1818,6 @@ async def upload_user_cover_photo(file: UploadFile = File(...), current_user: Us
         current_user.cover_photo = cover_url
         current_user.updated_at = datetime.utcnow()
 
-        # Criar entrada no álbum
-        # album_photo = AlbumPhoto(
-            # user_id=current_user.id,
-            # photo_url=cover_url,
-            # photo_type="cover",
-            # description="Foto de capa"
-        # )
-        # db.add(album_photo)
-
         # Criar post automático sobre a atualização da foto de capa
         cover_post = Post(
             author_id=current_user.id,
@@ -1840,7 +1827,7 @@ async def upload_user_cover_photo(file: UploadFile = File(...), current_user: Us
             media_url=cover_url,
             privacy="public",
             is_cover_update=True
-        # )
+        )
         db.add(cover_post)
         db.commit()
         print(f"✅ Database updated with cover URL: {cover_url}")
@@ -1890,15 +1877,6 @@ async def upload_cover_photo(file: UploadFile = File(...), current_user: User = 
         current_user.cover_photo = cover_url
         current_user.updated_at = datetime.utcnow()
 
-        # Criar entrada no álbum
-        # album_photo = AlbumPhoto(
-            # user_id=current_user.id,
-            # photo_url=cover_url,
-            # photo_type="cover",
-            # description="Foto de capa"
-        # )
-        # db.add(album_photo)
-
         # Criar post automático sobre a atualização da foto de capa
         cover_post = Post(
             author_id=current_user.id,
@@ -1908,7 +1886,7 @@ async def upload_cover_photo(file: UploadFile = File(...), current_user: User = 
             media_url=cover_url,
             privacy="public",
             is_cover_update=True
-        # )
+        )
         db.add(cover_post)
         db.commit()
 
@@ -1919,15 +1897,6 @@ async def upload_cover_photo(file: UploadFile = File(...), current_user: User = 
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to upload cover photo: {str(e)}")
-
-# @app.get("/users/{user_id}/album")
-# async def get_user_album(user_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-#     """Buscar fotos do álbum do usuário"""
-#     album_photos = db.query(AlbumPhoto).filter(
-#         AlbumPhoto.user_id == user_id
-#     ).order_by(AlbumPhoto.created_at.desc()).all()
-#
-#     return album_photos
 
 # Mark all notifications as read
 @app.put("/notifications/mark-all-read")
@@ -2039,7 +2008,7 @@ async def get_stories(current_user: User = Depends(get_current_user), db: Sessio
             created_at=story.created_at,
             expires_at=story.expires_at,
             views_count=db.query(StoryView).filter(StoryView.story_id == story.id).count()
-        # )
+        )
         for story in stories
     ]
 
@@ -2062,7 +2031,7 @@ async def view_story(story_id: int, current_user: User = Depends(get_current_use
         db_view = StoryView(
             story_id=story_id,
             viewer_id=current_user.id
-        # )
+        )
         db.add(db_view)
         db.commit()
     
@@ -2150,7 +2119,7 @@ async def create_story_with_editor(story_data: StoryWithEditor, current_user: Us
             color=overlay_data.color,
             font_family=overlay_data.font_family,
             font_size=overlay_data.font_size
-        # )
+        )
         db.add(story_overlay)
 
     db.commit()
@@ -2321,7 +2290,7 @@ async def get_notifications(current_user: User = Depends(get_current_user), db: 
                 "id": notification.sender.id,
                 "name": f"{notification.sender.first_name} {notification.sender.last_name}"
             } if notification.sender else None
-        # )
+        )
         for notification in notifications
     ]
 
@@ -2391,7 +2360,7 @@ async def update_profile(profile_data: UserProfileUpdate, current_user: User = D
         existing_user = db.query(User).filter(
             User.username == update_data["username"],
             User.id != current_user.id
-        # ).first()
+        ).first()
         if existing_user:
             raise HTTPException(status_code=400, detail="Username already taken")
 
@@ -2563,7 +2532,7 @@ async def send_message(message_data: MessageCreate, current_user: User = Depends
             message="enviou uma mensagem",
             data=json.dumps({"message_id": db_message.id}),
             created_at=datetime.utcnow()
-        # )
+        )
         db.add(notification)
         db.commit()
 
@@ -2695,7 +2664,7 @@ async def get_conversations(current_user: User = Depends(get_current_user), db: 
             Message.sender_id == conv_id,
             Message.recipient_id == current_user.id,
             Message.is_read == False
-        # ).count()
+        ).count()
         conversation_dict[conv_id]["unread_count"] = unread_count
 
     return list(conversation_dict.values())
