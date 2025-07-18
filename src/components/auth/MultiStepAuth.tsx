@@ -680,12 +680,12 @@ export function MultiStepAuth({ onLogin }: AuthProps) {
           <div className="mb-6 md:mb-8 flex-1">{renderStepContent()}</div>
 
           {/* Navigation Buttons */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-3 md:gap-4 mt-auto pt-4 md:pt-0">
             <button
               type="button"
               onClick={handlePrevious}
               disabled={currentStep === 1}
-              className="flex items-center px-4 py-2 text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center px-4 py-3 md:py-2 text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex-1 md:flex-initial justify-center md:justify-start text-base md:text-sm"
             >
               <ChevronLeft className="w-4 h-4 mr-1" />
               Voltar
@@ -695,7 +695,7 @@ export function MultiStepAuth({ onLogin }: AuthProps) {
               <button
                 type="button"
                 onClick={handleNext}
-                className="flex items-center px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="flex items-center px-6 py-3 md:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex-1 md:flex-initial justify-center text-base md:text-sm"
               >
                 Próximo
                 <ChevronRight className="w-4 h-4 ml-1" />
