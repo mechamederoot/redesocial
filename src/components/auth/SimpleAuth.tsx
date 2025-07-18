@@ -226,27 +226,29 @@ export function SimpleAuth({ onLogin }: AuthProps) {
               </div>
             )}
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
-            >
-              {loading ? (
-                <div className="flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                  Processando...
-                </div>
-              ) : isLogin ? (
-                "Entrar"
-              ) : (
-                "Criar conta"
-              )}
-            </button>
+            <div className="mt-auto pt-4 md:pt-0">
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 md:py-3 px-4 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-base"
+              >
+                {loading ? (
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                    Processando...
+                  </div>
+                ) : isLogin ? (
+                  "Entrar"
+                ) : (
+                  "Criar conta"
+                )}
+              </button>
+            </div>
           </form>
 
           {/* Toggle Auth Mode */}
-          <div className="mt-6 text-center">
-            <p className="text-gray-600">
+          <div className="mt-4 md:mt-6 text-center pb-4 md:pb-0">
+            <p className="text-gray-600 text-sm md:text-base">
               {isLogin ? "Não tem uma conta?" : "Já tem uma conta?"}{" "}
               <button
                 onClick={() => {
