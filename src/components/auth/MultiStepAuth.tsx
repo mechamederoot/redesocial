@@ -279,16 +279,16 @@ export function MultiStepAuth({ onLogin }: AuthProps) {
     switch (currentStep) {
       case 1:
         return (
-          <div className="space-y-4">
+          <div className="space-y-3 md:space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-1 md:mb-2">
                 Nome *
               </label>
               <input
                 type="text"
                 value={formData.firstName}
                 onChange={(e) => handleInputChange("firstName", e.target.value)}
-                className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full px-4 py-4 md:py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base ${
                   errors.firstName ? "border-red-500" : "border-gray-300"
                 }`}
                 placeholder="Seu nome"
@@ -300,14 +300,14 @@ export function MultiStepAuth({ onLogin }: AuthProps) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-1 md:mb-2">
                 Sobrenome *
               </label>
               <input
                 type="text"
                 value={formData.lastName}
                 onChange={(e) => handleInputChange("lastName", e.target.value)}
-                className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full px-4 py-4 md:py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base ${
                   errors.lastName ? "border-red-500" : "border-gray-300"
                 }`}
                 placeholder="Seu sobrenome"
