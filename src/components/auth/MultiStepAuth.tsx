@@ -401,7 +401,7 @@ export function MultiStepAuth({ onLogin }: AuthProps) {
                     onChange={(e) =>
                       handleInputChange("birthMonth", e.target.value)
                     }
-                    className={`w-full px-3 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    className={`w-full px-2 md:px-3 py-4 md:py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base ${
                       errors.birthDate ? "border-red-500" : "border-gray-300"
                     }`}
                   >
