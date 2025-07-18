@@ -324,7 +324,7 @@ export function PostPage({ userToken, currentUserId }: PostPageProps) {
         </div>
       </div>
 
-      {/* Comments Section */}
+      {/* Comments Section - Single definitive comment interface */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200">
         <div className="p-6">
           <h2 className="text-lg font-semibold mb-4">
