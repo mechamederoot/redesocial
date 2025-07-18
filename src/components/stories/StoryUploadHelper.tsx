@@ -53,24 +53,35 @@ export const createStoryWithFile = async (
   privacy: string,
   userToken: string,
 ): Promise<boolean> => {
-  console.log("🔥 Creating story with FormData approach...");
+  console.log("🔥 Creating story with file upload approach...");
 
   try {
     let mediaUrl: string | null = null;
     let mediaType: "text" | "photo" | "video" | "music" | null = "text";
 
-    // If there's a media file, convert to base64 for now (fallback approach)
+    // If there's a media file, upload it first
     if (mediaFile) {
-      console.log("📤 Converting media file to base64...");
+      console.log("📤 Uploading media file...");
 
-      // Convert to base64
-      const base64 = await new Promise<string>((resolve) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result as string);
-        reader.readAsDataURL(mediaFile);
+      // Upload the file using FormData
+      const formData = new FormData();
+      formData.append("file", mediaFile);
+
+      const uploadResponse = await fetch("http://localhost:8000/upload/media", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+        body: formData,
       });
 
-      mediaUrl = base64;
+      if (!uploadResponse.ok) {
+        console.error("❌ Media upload failed:", uploadResponse.status);
+        return false;
+      }
+
+      const uploadResult = await uploadResponse.json();
+      mediaUrl = uploadResult.file_path; // Use the file path returned by the server
 
       // Determine media type based on file
       if (mediaFile.type.startsWith("image/")) {
@@ -81,7 +92,7 @@ export const createStoryWithFile = async (
         mediaType = "music";
       }
 
-      console.log("✅ Media converted to base64 successfully");
+      console.log("✅ Media uploaded successfully:", mediaUrl);
     }
 
     // Create story payload
