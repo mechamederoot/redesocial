@@ -91,9 +91,9 @@ export function SimpleAuth({ onLogin }: AuthProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center md:p-4">
+      <div className="w-full h-full md:h-auto md:max-w-md md:rounded-2xl md:shadow-xl overflow-hidden">
+        <div className="bg-white h-full md:h-auto md:rounded-2xl md:shadow-xl p-4 md:p-8 flex flex-col justify-center min-h-screen md:min-h-0">
           {/* Logo */}
           <div className="text-center mb-8">
             <Logo size="lg" showText={true} />
