@@ -139,30 +139,33 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
     overlays?: any[],
   ) => {
     try {
-      const payload = {
+      // Use the proper file upload helper function
+      const { createStoryWithFile } = await import(
+        "../components/stories/StoryUploadHelper"
+      );
+
+      // Extract the actual file from mediaData if present
+      const mediaFile = mediaData?.file || null;
+
+      const success = await createStoryWithFile(
         content,
-        media_type: mediaData?.type || null,
-        media_url: mediaData?.url || null,
-        duration_hours: storyDuration || 24,
-        background_color: backgroundColor,
-        privacy: privacy || "public",
-        overlays: overlays || [],
-      };
+        mediaFile,
+        storyDuration || 24,
+        backgroundColor || "#3B82F6",
+        privacy || "public",
+        user.token,
+      );
 
-      const response = await fetch("http://localhost:8000/stories/", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (response.ok) {
+      if (success) {
+        console.log("✅ Story created successfully!");
         window.location.reload();
+      } else {
+        console.error("❌ Failed to create story");
+        alert("❌ Erro ao criar story. Tente novamente.");
       }
     } catch (error) {
       console.error("Erro ao criar story:", error);
+      alert("❌ Erro ao criar story. Tente novamente.");
     }
   };
 
