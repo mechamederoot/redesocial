@@ -321,16 +321,16 @@ export function MultiStepAuth({ onLogin }: AuthProps) {
 
       case 2:
         return (
-          <div className="space-y-4">
+          <div className="space-y-3 md:space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-1 md:mb-2">
                 Email *
               </label>
               <input
                 type="email"
                 value={formData.email}
                 onChange={(e) => handleInputChange("email", e.target.value)}
-                className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full px-4 py-4 md:py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base ${
                   errors.email ? "border-red-500" : "border-gray-300"
                 }`}
                 placeholder="seu@email.com"
