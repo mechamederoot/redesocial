@@ -60,6 +60,12 @@ export const PostCard: React.FC<PostCardProps> = ({
   const [loadingComment, setLoadingComment] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
+  // Detectar se estamos na página de post completo para evitar comentários duplicados
+  const isOnPostPage = location.pathname.startsWith(`/post/${post.id}`);
+
+  // Ocultar comentários automaticamente se estivermos na página completa
+  const shouldHideComments = hideComments || isOnPostPage;
+
   useEffect(() => {
     fetchReactions();
     fetchComments();
@@ -72,6 +78,13 @@ export const PostCard: React.FC<PostCardProps> = ({
     window.addEventListener("resize", checkIfMobile);
     return () => window.removeEventListener("resize", checkIfMobile);
   }, []);
+
+  // Fechar comentários se navegamos para a página de post completo
+  useEffect(() => {
+    if (isOnPostPage && showComments) {
+      setShowComments(false);
+    }
+  }, [isOnPostPage]);
 
   const fetchReactions = async () => {
     try {
