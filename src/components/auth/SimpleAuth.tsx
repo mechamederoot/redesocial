@@ -140,7 +140,7 @@ export function SimpleAuth({ onLogin }: AuthProps) {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1 md:mb-2">
                     Sobrenome
                   </label>
                   <div className="relative">
@@ -150,7 +150,7 @@ export function SimpleAuth({ onLogin }: AuthProps) {
                       name="last_name"
                       value={formData.last_name}
                       onChange={handleInputChange}
-                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full pl-10 pr-4 py-4 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base"
                       placeholder="Seu sobrenome"
                       required
                     />
@@ -160,7 +160,7 @@ export function SimpleAuth({ onLogin }: AuthProps) {
             )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-1 md:mb-2">
                 Email
               </label>
               <div className="relative">
@@ -170,7 +170,7 @@ export function SimpleAuth({ onLogin }: AuthProps) {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-4 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base"
                   placeholder="seu@email.com"
                   required
                 />
@@ -178,7 +178,7 @@ export function SimpleAuth({ onLogin }: AuthProps) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-1 md:mb-2">
                 Senha
               </label>
               <div className="relative">
@@ -188,7 +188,7 @@ export function SimpleAuth({ onLogin }: AuthProps) {
                   name="password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-10 pr-12 py-4 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base"
                   placeholder="••••••••"
                   required
                 />
@@ -208,7 +208,7 @@ export function SimpleAuth({ onLogin }: AuthProps) {
 
             {!isLogin && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1 md:mb-2">
                   Confirmar Senha
                 </label>
                 <div className="relative">
@@ -218,7 +218,7 @@ export function SimpleAuth({ onLogin }: AuthProps) {
                     name="confirm_password"
                     value={formData.confirm_password}
                     onChange={handleInputChange}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-4 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base"
                     placeholder="••••••••"
                     required
                   />
