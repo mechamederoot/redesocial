@@ -99,7 +99,7 @@ export function MultiStepAuth({ onLogin }: AuthProps) {
 
       case 2: // Email
         if (!formData.email.trim()) {
-          newErrors.email = "Email é obrigatório";
+          newErrors.email = "Email �� obrigatório";
         } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
           newErrors.email = "Formato de email inválido";
         }
@@ -634,27 +634,27 @@ export function MultiStepAuth({ onLogin }: AuthProps) {
 
           {/* Progress Bar */}
           <div className="mb-6 md:mb-8">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-3 md:mb-4">
               {STEPS.map((step, index) => {
                 const StepIcon = step.icon;
                 return (
                   <div key={step.id} className="flex items-center">
                     <div
-                      className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium ${
+                      className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-xs md:text-sm font-medium ${
                         currentStep >= step.id
                           ? "bg-blue-600 text-white"
                           : "bg-gray-200 text-gray-500"
                       }`}
                     >
                       {currentStep > step.id ? (
-                        <Check className="w-5 h-5" />
+                        <Check className="w-4 h-4 md:w-5 md:h-5" />
                       ) : (
-                        <StepIcon className="w-5 h-5" />
+                        <StepIcon className="w-4 h-4 md:w-5 md:h-5" />
                       )}
                     </div>
                     {index < STEPS.length - 1 && (
                       <div
-                        className={`w-full h-1 mx-2 ${
+                        className={`w-full h-1 mx-1 md:mx-2 ${
                           currentStep > step.id ? "bg-blue-600" : "bg-gray-200"
                         }`}
                       />
@@ -663,7 +663,7 @@ export function MultiStepAuth({ onLogin }: AuthProps) {
                 );
               })}
             </div>
-            <p className="text-sm text-gray-600 text-center">
+            <p className="text-xs md:text-sm text-gray-600 text-center">
               Etapa {currentStep} de {STEPS.length}:{" "}
               {STEPS[currentStep - 1].title}
             </p>
