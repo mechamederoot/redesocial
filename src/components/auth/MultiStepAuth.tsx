@@ -622,16 +622,18 @@ export function MultiStepAuth({ onLogin }: AuthProps) {
       <div className="w-full h-full md:h-auto md:max-w-lg md:rounded-2xl md:shadow-xl overflow-hidden">
         <div className="bg-white h-full md:h-auto md:rounded-2xl md:shadow-xl p-4 md:p-8 flex flex-col justify-center min-h-screen md:min-h-0">
           {/* Logo e Header */}
-          <div className="text-center mb-8">
-            <Logo className="mx-auto mb-6" />
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+          <div className="text-center mb-6 md:mb-8">
+            <Logo className="mx-auto mb-4 md:mb-6" />
+            <h1 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">
               Criar Conta
             </h1>
-            <p className="text-gray-600">Junte-se à nossa comunidade</p>
+            <p className="text-sm md:text-base text-gray-600">
+              Junte-se à nossa comunidade
+            </p>
           </div>
 
           {/* Progress Bar */}
-          <div className="mb-8">
+          <div className="mb-6 md:mb-8">
             <div className="flex items-center justify-between mb-4">
               {STEPS.map((step, index) => {
                 const StepIcon = step.icon;
