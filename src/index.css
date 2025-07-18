@@ -12,3 +12,34 @@
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
+
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+  /* Prevent zoom on input focus for iOS */
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+
+  /* Full height for mobile auth pages */
+  .mobile-auth-container {
+    height: 100vh;
+    height: 100dvh; /* Dynamic viewport height for better mobile support */
+  }
+
+  /* Ensure proper touch targets */
+  button {
+    min-height: 44px;
+  }
+
+  /* Better input styling for mobile */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+}
