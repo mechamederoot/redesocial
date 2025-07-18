@@ -55,6 +55,12 @@ export function PostPage({ userToken, currentUserId }: PostPageProps) {
       fetchPost();
       fetchComments();
     }
+
+    // Cleanup any potential conflicting comment states
+    return () => {
+      setComments([]);
+      setNewComment("");
+    };
   }, [postId]);
 
   const fetchPost = async () => {
