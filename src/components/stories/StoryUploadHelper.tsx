@@ -45,6 +45,47 @@ export const uploadStoryMedia = async (
   }
 };
 
+// Função para comprimir imagem
+const compressImage = (
+  file: File,
+  maxWidth: number = 800,
+  quality: number = 0.8,
+): Promise<string> => {
+  return new Promise((resolve) => {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    const img = new Image();
+
+    img.onload = () => {
+      // Calcular nova dimensão mantendo proporção
+      let { width, height } = img;
+      if (width > height) {
+        if (width > maxWidth) {
+          height = (height * maxWidth) / width;
+          width = maxWidth;
+        }
+      } else {
+        if (height > maxWidth) {
+          width = (width * maxWidth) / height;
+          height = maxWidth;
+        }
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+
+      // Desenhar imagem redimensionada
+      ctx?.drawImage(img, 0, 0, width, height);
+
+      // Converter para base64 comprimido
+      const compressedBase64 = canvas.toDataURL("image/jpeg", quality);
+      resolve(compressedBase64);
+    };
+
+    img.src = URL.createObjectURL(file);
+  });
+};
+
 export const createStoryWithFile = async (
   content: string,
   mediaFile: File | null,
@@ -53,35 +94,52 @@ export const createStoryWithFile = async (
   privacy: string,
   userToken: string,
 ): Promise<boolean> => {
-  console.log("🔥 Creating story with file upload approach...");
+  console.log("🔥 Creating story with smart compression...");
 
   try {
     let mediaUrl: string | null = null;
     let mediaType: "text" | "photo" | "video" | "music" | null = "text";
 
-    // If there's a media file, upload it first
+    // If there's a media file, try upload first, fallback to compressed base64
     if (mediaFile) {
-      console.log("📤 Uploading media file...");
+      console.log("📤 Trying file upload first...");
 
-      // Upload the file using FormData
-      const formData = new FormData();
-      formData.append("file", mediaFile);
+      // Try file upload first
+      try {
+        const formData = new FormData();
+        formData.append("file", mediaFile);
 
-      const uploadResponse = await fetch("http://localhost:8000/upload/media", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${userToken}`,
-        },
-        body: formData,
-      });
+        const uploadResponse = await fetch(
+          "http://localhost:8000/upload/media",
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${userToken}`,
+            },
+            body: formData,
+          },
+        );
 
-      if (!uploadResponse.ok) {
-        console.error("❌ Media upload failed:", uploadResponse.status);
-        return false;
+        if (uploadResponse.ok) {
+          const uploadResult = await uploadResponse.json();
+          mediaUrl = uploadResult.file_path;
+          console.log("✅ File upload successful:", mediaUrl);
+        } else {
+          throw new Error("Upload failed");
+        }
+      } catch (uploadError) {
+        console.log("📦 File upload failed, using compressed image...");
+
+        // Fallback: compress image for base64 storage
+        if (mediaFile.type.startsWith("image/")) {
+          console.log("🗜️ Compressing image...");
+          mediaUrl = await compressImage(mediaFile, 600, 0.7); // Compress to max 600px, 70% quality
+          console.log("✅ Image compressed successfully");
+        } else {
+          console.error("❌ Cannot process non-image files without upload");
+          return false;
+        }
       }
-
-      const uploadResult = await uploadResponse.json();
-      mediaUrl = uploadResult.file_path; // Use the file path returned by the server
 
       // Determine media type based on file
       if (mediaFile.type.startsWith("image/")) {
@@ -91,8 +149,6 @@ export const createStoryWithFile = async (
       } else if (mediaFile.type.startsWith("audio/")) {
         mediaType = "music";
       }
-
-      console.log("✅ Media uploaded successfully:", mediaUrl);
     }
 
     // Create story payload
