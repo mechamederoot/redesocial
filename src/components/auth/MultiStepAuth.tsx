@@ -618,7 +618,7 @@ export function MultiStepAuth({ onLogin }: AuthProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center md:p-4">
+    <div className="min-h-screen mobile-auth-container bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center md:p-4">
       <div className="w-full h-full md:h-auto md:max-w-lg md:rounded-2xl md:shadow-xl overflow-hidden">
         <div className="bg-white h-full md:h-auto md:rounded-2xl md:shadow-xl p-4 md:p-8 flex flex-col justify-center min-h-screen md:min-h-0">
           {/* Logo e Header */}
