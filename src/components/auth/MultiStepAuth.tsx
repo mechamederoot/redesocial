@@ -99,7 +99,7 @@ export function MultiStepAuth({ onLogin }: AuthProps) {
 
       case 2: // Email
         if (!formData.email.trim()) {
-          newErrors.email = "Email �� obrigatório";
+          newErrors.email = "Email é obrigatório";
         } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
           newErrors.email = "Formato de email inválido";
         }
@@ -671,13 +671,13 @@ export function MultiStepAuth({ onLogin }: AuthProps) {
 
           {/* Error Messages */}
           {errors.general && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <div className="mb-4 md:mb-6 p-3 md:p-4 bg-red-50 border border-red-200 rounded-lg">
               <p className="text-red-600 text-sm">{errors.general}</p>
             </div>
           )}
 
           {/* Step Content */}
-          <div className="mb-8">{renderStepContent()}</div>
+          <div className="mb-6 md:mb-8 flex-1">{renderStepContent()}</div>
 
           {/* Navigation Buttons */}
           <div className="flex items-center justify-between">
