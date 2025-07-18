@@ -95,12 +95,12 @@ export function SimpleAuth({ onLogin }: AuthProps) {
       <div className="w-full h-full md:h-auto md:max-w-md md:rounded-2xl md:shadow-xl overflow-hidden">
         <div className="bg-white h-full md:h-auto md:rounded-2xl md:shadow-xl p-4 md:p-8 flex flex-col justify-center min-h-screen md:min-h-0">
           {/* Logo */}
-          <div className="text-center mb-8">
+          <div className="text-center mb-6 md:mb-8">
             <Logo size="lg" showText={true} />
-            <h2 className="text-2xl font-bold text-gray-900 mt-4">
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mt-3 md:mt-4">
               {isLogin ? "Bem-vindo de volta!" : "Criar conta"}
             </h2>
-            <p className="text-gray-600 mt-2">
+            <p className="text-sm md:text-base text-gray-600 mt-2">
               {isLogin
                 ? "Entre na sua conta para continuar"
                 : "Junte-se à nossa comunidade"}
