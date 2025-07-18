@@ -13,7 +13,7 @@ class Story(Base):
     author_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     content = Column(Text)
     media_type = Column(String(50))
-    media_url = Column(String(500))
+        media_url = Column(Text)
     background_color = Column(String(7))
     duration_hours = Column(Integer, default=24)
     max_duration_seconds = Column(Integer, default=25)  # For videos
