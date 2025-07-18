@@ -373,17 +373,17 @@ export function MultiStepAuth({ onLogin }: AuthProps) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-1 md:mb-2">
                 Data de Nascimento *
               </label>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-3 gap-2 md:gap-3">
                 <div>
                   <select
                     value={formData.birthDay}
                     onChange={(e) =>
                       handleInputChange("birthDay", e.target.value)
                     }
-                    className={`w-full px-3 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    className={`w-full px-2 md:px-3 py-4 md:py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base ${
                       errors.birthDate ? "border-red-500" : "border-gray-300"
                     }`}
                   >
