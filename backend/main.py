@@ -27,6 +27,14 @@ except Exception as e:
     if "No module named" not in str(e):
         print(f"⚠️ Could not auto-fix reactions table: {e}")
 
+try:
+    from maintenance.auto_fix_story_media_url import auto_fix_story_media_url
+    auto_fix_story_media_url()
+except Exception as e:
+    # Silenciar aviso se arquivo não existir
+    if "No module named" not in str(e):
+        print(f"⚠️ Could not auto-fix story media_url column: {e}")
+
 # Configurações
 SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-here-change-in-production")
 ALGORITHM = "HS256"
@@ -2459,7 +2467,7 @@ async def get_notification_settings(current_user: User = Depends(get_current_use
 
 @app.put("/settings/notifications")
 async def update_notification_settings(notification_data: NotificationSettings, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    """Atualizar configurações de notificação"""
+    """Atualizar configuraç��es de notificação"""
     update_data = notification_data.dict(exclude_unset=True)
 
     for field, value in update_data.items():
