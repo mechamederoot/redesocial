@@ -705,7 +705,7 @@ export function MultiStepAuth({ onLogin }: AuthProps) {
                 type="button"
                 onClick={handleSubmit}
                 disabled={loading}
-                className="flex items-center px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="flex items-center px-6 py-3 md:py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex-1 md:flex-initial justify-center text-base md:text-sm"
               >
                 {loading ? (
                   <>
@@ -723,8 +723,8 @@ export function MultiStepAuth({ onLogin }: AuthProps) {
           </div>
 
           {/* Login Link */}
-          <div className="mt-6 text-center">
-            <p className="text-gray-600">
+          <div className="mt-4 md:mt-6 text-center pb-4 md:pb-0">
+            <p className="text-gray-600 text-sm md:text-base">
               Já tem uma conta?{" "}
               <button
                 onClick={() => (window.location.href = "/")}
