@@ -539,17 +539,17 @@ export function MultiStepAuth({ onLogin }: AuthProps) {
 
       case 5:
         return (
-          <div className="space-y-4">
-            <div className="text-center mb-6">
+          <div className="space-y-3 md:space-y-4">
+            <div className="text-center mb-4 md:mb-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
                 Quase pronto!
               </h3>
-              <p className="text-gray-600">
+              <p className="text-gray-600 text-sm md:text-base">
                 Para finalizar, você precisa aceitar nossos termos.
               </p>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3 md:space-y-4">
               <label className="flex items-start space-x-3 cursor-pointer">
                 <input
                   type="checkbox"
