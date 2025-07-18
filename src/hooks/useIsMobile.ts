@@ -38,7 +38,7 @@ export function useDeviceType() {
       }
     };
 
-    checkIsMobile();
+    checkDeviceType();
     window.addEventListener("resize", checkDeviceType);
     return () => window.removeEventListener("resize", checkDeviceType);
   }, []);
