@@ -444,7 +444,7 @@ export const PostCard: React.FC<PostCardProps> = ({
               onReactionChange={(reaction) => setCurrentReaction(reaction)}
               onReactionRemove={() => setCurrentReaction(null)}
             />
-            {!hideComments ? (
+            {!shouldHideComments ? (
               <button
                 onClick={() => setShowComments(!showComments)}
                 className="flex items-center space-x-2 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
