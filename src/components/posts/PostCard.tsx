@@ -487,7 +487,7 @@ export const PostCard: React.FC<PostCardProps> = ({
       </div>
 
       {/* Comments Section */}
-      {!hideComments && showComments && (
+      {!shouldHideComments && showComments && (
         <>
           {isMobile ? (
             <div className="fixed inset-0 bg-white z-50 flex flex-col">
