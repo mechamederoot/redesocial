@@ -122,7 +122,7 @@ export function SimpleAuth({ onLogin }: AuthProps) {
             {!isLogin && (
               <>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1 md:mb-2">
                     Nome
                   </label>
                   <div className="relative">
@@ -132,7 +132,7 @@ export function SimpleAuth({ onLogin }: AuthProps) {
                       name="first_name"
                       value={formData.first_name}
                       onChange={handleInputChange}
-                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full pl-10 pr-4 py-4 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base"
                       placeholder="Seu nome"
                       required
                     />
